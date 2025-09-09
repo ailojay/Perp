@@ -1,0 +1,43 @@
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Exclude override files as they are usually for local use
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Exclude CLI configuration files
+.terraformrc
+terraform.rc
+
+# Sensitive variable files (don’t commit plaintext creds)
+*.tfvars
+*.tfvars.json
+
+# IDE/editor junk
+.vscode/
+.idea/
+.DS_Store
+
+# Logs
+*.log
+
+# Python virtualenv (if you use automation scripts)
+.venv/
+
+# bootstrap tfstate and override files
+bootstrap/
+bootstrap.tfvars.*
+bootstrap.tfstate
+bootstrap.tfstate.*
+bootstrap_override.tf
+bootstrap_override.tf.json

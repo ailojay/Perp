@@ -38,12 +38,6 @@ variable "ssh_allowed_ip" {
   type        = string
 }
 
-variable "aws_region" {
-  description = "AWS region to deploy resources"
-  type        = string
-  default     = "us-east-1"
-}
-
 variable "cidr_block" {
   description = "CIDR block for the VPC"
   type        = string

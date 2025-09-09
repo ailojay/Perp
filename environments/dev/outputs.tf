@@ -1,39 +1,45 @@
-variable "project_name" {
+output "project_name" {
   description = "Project name"
-  type        = string
+  value       = var.project_name
 }
 
-variable "environment" {
-  description = "Environment name (dev, staging, prod)"
-  type        = string
+output "environment" {
+  description = "Environment name"
+  value       = var.environment
 }
 
-variable "region" {
+output "region" {
   description = "AWS region"
-  type        = string
+  value       = var.region
 }
 
-variable "state_bucket" {
-  description = "S3 bucket for remote state"
-  type        = string
+output "state_bucket" {
+  description = "Terraform state bucket name"
+  value       = var.state_bucket
 }
 
-variable "vpcproject_name" {
+output "vpcproject_name" {
   description = "VPC project name"
-  type        = string
+  value       = var.vpcproject_name
 }
 
-variable "instance_name" {
+output "instance_name" {
   description = "EC2 instance name"
-  type        = string
+  value       = var.instance_name
 }
 
-variable "ssh_key_name" {
-  description = "SSH key pair name"
-  type        = string
+output "ssh_key_name" {
+  description = "SSH key name"
+  value       = var.ssh_key_name
 }
 
-variable "ssh_allowed_ip" {
-  description = "Allowed SSH CIDR (set via GitHub Secret TF_VAR_ssh_allowed_ip)"
-  type        = string
+output "ssh_allowed_ip" {
+  description = "Allowed SSH IP address"
+  value       = var.ssh_allowed_ip
+}
+
+output "cidr_block" {
+  description = "CIDR block for the VPC"
+  value       = var.cidr_block
+
 }

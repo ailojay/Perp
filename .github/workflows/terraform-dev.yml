@@ -3,10 +3,10 @@ name: Terraform CI - Dev
 on:
   push:
     paths:
-      - 'terraform/environments/dev/**'
+      - environments/dev/**'
   pull_request:
     paths:
-      - 'terraform/environments/dev/**'
+      - environments/dev/**'
   workflow_dispatch:
 
 jobs:

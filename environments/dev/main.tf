@@ -13,5 +13,5 @@ module "compute" {
   instance_type  = var.instance_type
   subnet_id      = module.network.public_subnet_id
   security_group = module.network.security_group
-  ssh_key_name   = var.ssh_key_name
+  region         = var.region
 }

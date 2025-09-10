@@ -28,16 +28,6 @@ output "instance_name" {
   value       = var.instance_name
 }
 
-output "ssh_key_name" {
-  description = "SSH key name"
-  value       = var.ssh_key_name
-}
-
-output "ssh_allowed_ip" {
-  description = "Allowed SSH IP address"
-  value       = var.ssh_allowed_ip
-}
-
 output "cidr_block" {
   description = "CIDR block for the VPC"
   value       = var.cidr_block

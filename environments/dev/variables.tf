@@ -28,11 +28,6 @@ variable "instance_name" {
   type        = string
 }
 
-variable "ssh_key_name" {
-  description = "SSH key pair name"
-  type        = string
-}
-
 variable "ssh_allowed_ip" {
   description = "Allowed SSH CIDR (set via GitHub Secret TF_VAR_ssh_allowed_ip)"
   type        = string

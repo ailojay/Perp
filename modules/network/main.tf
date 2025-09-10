@@ -53,13 +53,13 @@ resource "aws_security_group" "ssh_sg" {
   description = "Allow SSH only from specific IP"
   vpc_id      = aws_vpc.this.id
 
-ingress {
-  description      = "SSH access"
-  from_port        = 22
-  to_port          = 22
-  protocol         = "tcp"
-  cidr_blocks      = [var.ssh_allowed_ip]
-}
+  ingress {
+    description = "SSH access"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [var.ssh_allowed_ip]  # Your IP from tfvars
+  }
 
   egress {
     from_port   = 0

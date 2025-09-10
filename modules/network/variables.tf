@@ -14,11 +14,6 @@ variable "cidr_block" {
 }
 
 variable "ssh_allowed_ip" {
-  description = "CIDR block allowed for SSH access"
-  type        = string
-}
-
-variable "ssh_allowed_ip" {
   description = "The IP address allowed to access SSH"
   type        = string
 }

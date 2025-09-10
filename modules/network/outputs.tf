@@ -11,6 +11,6 @@ output "sg_id" {
 }
 
 output "ssh_allowed_ip" {
-  value = var.ssh_allowed_ip
-  
+  value       = var.ssh_allowed_ip
+  description = "The IP address allowed to access SSH"
 }

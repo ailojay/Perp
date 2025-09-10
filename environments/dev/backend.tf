@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
-    bucket         = var.state_bucket
-    key            = "${var.project_name}/${var.environment}/terraform.tfstate"
-    region         = var.region
+    bucket         = "perp-tfstate-dev"
+    key            = "myproject/dev/terraform.tfstate"
+    region         = "us-east-1"
     dynamodb_table = "perp-locks"
     encrypt        = true
   }

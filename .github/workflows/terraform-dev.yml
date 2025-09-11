@@ -2,8 +2,6 @@ name: Terraform CI - Dev
 
 on:
   push:
-    branches:
-      - main
     paths:
       - 'environments/dev/**'
   pull_request:
@@ -11,16 +9,14 @@ on:
       - 'environments/dev/**'
   workflow_dispatch:
 
+permissions:
+  id-token: write   # required for OIDC
+  contents: read    # required for checkout
+
 jobs:
   terraform:
     runs-on: ubuntu-latest
     environment: dev
-
-    # ✅ Required for OIDC
-    permissions:
-      id-token: write
-      contents: read
-
     defaults:
       run:
         working-directory: environments/dev
@@ -35,9 +31,6 @@ jobs:
           role-to-assume: arn:aws:iam::961535847135:role/perp-dev-github-actions-role
           aws-region: us-east-1
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-
       - name: Terraform Init
         run: terraform init
 
@@ -47,6 +40,7 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
+      # Apply is commented out for now
       # - name: Terraform Apply
       #   if: github.ref == 'refs/heads/main'
       #   run: terraform apply -auto-approve tfplan

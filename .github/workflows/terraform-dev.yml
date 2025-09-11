@@ -2,9 +2,13 @@ name: Terraform CI - Dev
 
 on:
   push:
+    branches:
+      - main          # only trigger on oidc-test branch
     paths:
       - 'environments/dev/**'
   pull_request:
+    branches:
+      - main          # also run on PRs into oidc-test
     paths:
       - 'environments/dev/**'
   workflow_dispatch:
@@ -21,8 +25,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Configure AWS credentials with OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::961535847135:role/perp-dev-github-actions-role
+          aws-region: us-east-1
+
       - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init
@@ -31,14 +41,4 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan
-
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve tfplan
-
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      SSH_ALLOWED_IP: ${{ secrets.SSH_ALLOWED_IP }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: terraform plan

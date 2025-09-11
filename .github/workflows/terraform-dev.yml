@@ -2,11 +2,7 @@ name: Terraform CI - Dev
 
 on:
   push:
-    paths:
-      - 'environments/dev/**'
   pull_request:
-    paths:
-      - 'environments/dev/**'
   workflow_dispatch:
 
 permissions:

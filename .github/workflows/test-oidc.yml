@@ -1,0 +1,21 @@
+name: Test OIDC AWS Auth
+
+on:
+  workflow_dispatch:   # allows manual trigger from GitHub Actions UI
+
+jobs:
+  test-oidc:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials with OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::961535847135:role/perp-dev-github-actions-role
+          aws-region: us-east-1
+
+      - name: Verify identity
+        run: aws sts get-caller-identity

@@ -15,6 +15,9 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     environment: dev
+    defaults:
+      run:
+        working-directory: environments/dev   # ✅ sets dir for all steps
 
     steps:
       - name: Checkout code
@@ -30,18 +33,14 @@ jobs:
         uses: hashicorp/setup-terraform@v2
 
       - name: Terraform Init
-        working-directory: environments/dev
         run: terraform init
 
       - name: Terraform Validate
-        working-directory: environments/dev
         run: terraform validate
 
       - name: Terraform Plan
-        working-directory: environments/dev
         run: terraform plan -out=tfplan
 
       # - name: Terraform Apply
       #   if: github.ref == 'refs/heads/main'
-      #   working-directory: environments/dev
       #   run: terraform apply -auto-approve tfplan

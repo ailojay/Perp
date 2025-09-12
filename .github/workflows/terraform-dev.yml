@@ -3,12 +3,12 @@ name: Terraform CI - Dev
 on:
   push:
     paths:
-      - "environments/dev/**"
-      - "modules/**"
+      - 'environments/dev/**'
+      - 'modules/**'
   pull_request:
     paths:
-      - "environments/dev/**"
-      - "modules/**"
+      - 'environments/dev/**'
+      - 'modules/**'
   workflow_dispatch:
 
 permissions:
@@ -23,7 +23,7 @@ jobs:
       run:
         working-directory: environments/dev
 
-      env:
+    env:
       TF_VAR_environment: ${{ secrets.TF_VAR_ENVIRONMENT }}
       TF_VAR_project_name: ${{ secrets.TF_VAR_PROJECT_NAME }}
       TF_VAR_region: ${{ secrets.TF_VAR_REGION }}

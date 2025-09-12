@@ -66,6 +66,5 @@ jobs:
           name: terraform-plan
           path: environments/dev/tfplan
 
-      # Uncomment when ready to deploy
-      # - name: Terraform Apply
-      #   run: terraform apply -auto-approve -no-color -input=false tfplan
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -no-color -input=false tfplan

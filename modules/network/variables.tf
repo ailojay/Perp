@@ -13,7 +13,8 @@ variable "cidr_block" {
   type        = string
 }
 
-variable "ssh_allowed_ip" {
-  description = "The IP address allowed to access SSH"
+variable "security_group" {
+  description = "Description for the security group"
   type        = string
+  default     = "Security group for project"
 }

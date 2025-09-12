@@ -5,8 +5,12 @@ output "vpc_id" {
 output "public_subnet_id" {
   value = aws_subnet.public.id
 }
+output "security_group_id" {
+  description = "The ID of the security group"
+  value       = aws_security_group.this.id
+}
 
 output "security_group" {
-  value       = aws_security_group.ssh_sg.id
-  description = "Security group ID allowing SSH access"
+  description = "The name of the security group"
+  value       = aws_security_group.this.name
 }

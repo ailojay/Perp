@@ -47,25 +47,18 @@ resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
 }
-
-resource "aws_security_group" "ssh_sg" {
+resource "aws_security_group" "this" {
   name        = "${var.project_name}-${var.environment}-sg"
-  description = "Allow SSH only from specific IP"
+  description = "Security group for ${var.project_name} in ${var.environment}"
   vpc_id      = aws_vpc.this.id
 
-  ingress {
-    description = "SSH access"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.ssh_allowed_ip]  # Your IP from tfvars
-  }
-
+  
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
   }
 
   tags = {

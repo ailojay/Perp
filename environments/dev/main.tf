@@ -1,9 +1,8 @@
 module "network" {
-  source         = "../../modules/network"
-  project_name   = var.project_name
-  environment    = var.environment
-  ssh_allowed_ip = var.ssh_allowed_ip
-  cidr_block     = var.cidr_block
+  source       = "../../modules/network"
+  project_name = var.project_name
+  environment  = var.environment
+  cidr_block   = var.cidr_block
 }
 
 module "compute" {

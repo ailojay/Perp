@@ -28,11 +28,6 @@ variable "instance_name" {
   type        = string
 }
 
-variable "ssh_allowed_ip" {
-  description = "Allowed SSH CIDR (set via GitHub Secret TF_VAR_ssh_allowed_ip)"
-  type        = string
-}
-
 variable "cidr_block" {
   description = "CIDR block for the VPC"
   type        = string
@@ -44,4 +39,11 @@ variable "instance_type" {
   description = "EC2 instance type"
   type        = string
   default     = "t2.micro"
+}
+
+variable "cidr_blocks" {
+  description = "CIDR blocks for the VPC"
+  type        = string
+  default     = "0.0.0.0/16"
+  
 }

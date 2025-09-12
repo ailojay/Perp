@@ -27,9 +27,3 @@ output "instance_name" {
   description = "EC2 instance name"
   value       = var.instance_name
 }
-
-output "cidr_block" {
-  description = "CIDR block for the VPC"
-  value       = var.cidr_block
-
-}

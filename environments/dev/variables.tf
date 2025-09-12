@@ -45,5 +45,5 @@ variable "cidr_blocks" {
   description = "CIDR blocks for the VPC"
   type        = string
   default     = "0.0.0.0/16"
-  
+
 }

@@ -33,3 +33,8 @@ output "cidr_block" {
   value       = var.cidr_block
 
 }
+
+# Add this to your outputs.tf temporarily
+output "debug_cidr_block" {
+  value = var.cidr_block
+}

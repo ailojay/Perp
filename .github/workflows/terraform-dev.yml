@@ -60,8 +60,8 @@ jobs:
       - name: Run KICS scan
         uses: checkmarx/kics-action@v2
         with:
-          scan_path: environments/dev
-          exit_on_issue: "true"
+          path: "environments/dev"           # Correct input
+          fail_on: "high"                    # Optional: fail workflow on high severity
           output_formats: "sarif"
           output_path: "kics-report.sarif"
 

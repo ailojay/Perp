@@ -3,12 +3,12 @@ name: Terraform CI - Dev
 on:
   push:
     paths:
-      - 'environments/dev/**'
-      - 'modules/**'
+      - "environments/dev/**"
+      - "modules/**"
   pull_request:
     paths:
-      - 'environments/dev/**'
-      - 'modules/**'
+      - "environments/dev/**"
+      - "modules/**"
   workflow_dispatch:
 
 permissions:
@@ -23,15 +23,16 @@ jobs:
       run:
         working-directory: environments/dev
 
-    env:
+      env:
       TF_VAR_environment: ${{ secrets.TF_VAR_ENVIRONMENT }}
       TF_VAR_project_name: ${{ secrets.TF_VAR_PROJECT_NAME }}
       TF_VAR_region: ${{ secrets.TF_VAR_REGION }}
       TF_VAR_cidr_block: ${{ secrets.TF_VAR_CIDR_BLOCK }}
       TF_VAR_instance_type: ${{ secrets.TF_VAR_INSTANCE_TYPE }}
       TF_VAR_state_bucket: ${{ secrets.STATE_BUCKET }}
-      TF_VAR_vpc_project_name: ${{ secrets.VPC_PROJECT_NAME }}
+      TF_VAR_vpcproject_name: ${{ secrets.VPC_PROJECT_NAME }}
       TF_VAR_instance_name: ${{ secrets.INSTANCE_NAME }}
+      TF_VAR_ssh_allowed_ip: ${{ secrets.TF_VAR_SSH_ALLOWED_IP }}
 
     steps:
       - name: Checkout code

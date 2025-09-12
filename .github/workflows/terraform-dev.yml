@@ -57,6 +57,14 @@ jobs:
       - name: Terraform Format Check
         run: terraform fmt -check -no-color
 
+      - name: Run KICS scan
+        uses: checkmarx/kics-action@v2
+        with:
+          scan_path: environments/dev
+          exit_on_issue: "true"
+          output_formats: "sarif"
+          output_path: "kics-report.sarif"
+
       - name: Terraform Plan
         run: terraform plan -out=tfplan -no-color -input=false
 

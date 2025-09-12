@@ -40,10 +40,3 @@ variable "instance_type" {
   type        = string
   default     = "t2.micro"
 }
-
-variable "cidr_blocks" {
-  description = "CIDR blocks for the VPC"
-  type        = string
-  default     = "0.0.0.0/16"
-
-}

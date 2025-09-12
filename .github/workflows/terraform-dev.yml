@@ -65,6 +65,11 @@ jobs:
           output_formats: "sarif"
           output_path: "kics-report.sarif"
 
+      - name: Upload SARIF report to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: environments/dev/kics-report.sarif
+
       - name: Terraform Plan
         run: terraform plan -out=tfplan -no-color -input=false
 

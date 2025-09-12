@@ -62,7 +62,7 @@ jobs:
         uses: checkmarx/kics-action@v2
         with:
           path: "environments/dev"
-          fail_on: "high"
+          fail_on: "medium"
           output_formats: "sarif"
           output_path: "environments/dev/kics-report.sarif"
 

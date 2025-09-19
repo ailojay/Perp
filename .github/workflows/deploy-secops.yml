@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./accounts/secops  # All commands run from here
+        working-directory: ./environments/secops  # All commands run from here
 
     steps:
       - name: Checkout code

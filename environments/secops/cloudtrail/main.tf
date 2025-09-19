@@ -40,7 +40,7 @@ resource "aws_kms_key" "cloudtrail" {
   description             = "KMS key for encrypting CloudTrail logs"
   deletion_window_in_days = 30
   enable_key_rotation     = true
-  policy                  = templatefile("${path.module}/../../../policies/kms/cloudtrail_key.json", {
+  policy = templatefile("${path.module}/../../../policies/kms/cloudtrail_key.json", {
     account_id = data.aws_caller_identity.current.account_id
   })
 }

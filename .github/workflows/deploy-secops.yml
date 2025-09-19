@@ -1,0 +1,56 @@
+name: 'Terraform Plan and Apply for SecOps'
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'accounts/secops/**'   # Run only when secops code changes
+      - 'modules/**'           # Or when shared modules change
+      - 'policies/**'          # Or when policies change
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'accounts/secops/**'
+      - 'modules/**'
+      - 'policies/**'
+
+permissions:
+  id-token: write   # This is required for OIDC
+  contents: read    # This is required to checkout the code
+
+jobs:
+  terraform-secops:
+    name: 'Terraform on SecOps Account'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./accounts/secops  # All commands run from here
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.SECOPS_DEPLOY_ROLE_ARN }}  # We will add this secret
+          role-session-name: GitHubActions-SecOps-Deploy
+          mask-aws-account-id: true
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        run: terraform plan -no-color -out=tfplan
+        if: github.event_name == 'pull_request'
+
+      - name: Terraform Apply
+        run: terraform apply -no-color -auto-approve tfplan
+        if: github.event_name == 'push'

@@ -14,3 +14,21 @@ module "compute" {
   security_group_id = module.network.security_group_id
   region            = var.region
 }
+
+module "s3_site" {
+  source       = "../../modules/s3_site"
+  project_name = var.project_name
+  environment  = var.environment
+}
+
+module "iam_baseline" {
+  source       = "../../security/iam"
+  project_name = var.project_name
+  environment  = var.environment
+}
+
+module "security_hub" {
+  source       = "../../security/security_hub"
+  project_name = var.project_name
+  environment  = var.environment
+}

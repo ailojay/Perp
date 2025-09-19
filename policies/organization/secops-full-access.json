@@ -1,0 +1,56 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowFullOrganizationsAccess",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::891336823827:root"
+      },
+      "Action": [
+        "organizations:AcceptHandshake",
+        "organizations:AttachPolicy",
+        "organizations:CancelHandshake",
+        "organizations:CreateAccount",
+        "organizations:CreateOrganization",
+        "organizations:CreateOrganizationalUnit",
+        "organizations:CreatePolicy",
+        "organizations:DeclineHandshake",
+        "organizations:DeleteOrganization",
+        "organizations:DeleteOrganizationalUnit",
+        "organizations:DeletePolicy",
+        "organizations:DescribeAccount",
+        "organizations:DescribeCreateAccountStatus",
+        "organizations:DescribeEffectivePolicy",
+        "organizations:DescribeHandshake",
+        "organizations:DescribeOrganization",
+        "organizations:DescribeOrganizationalUnit",
+        "organizations:DescribePolicy",
+        "organizations:DetachPolicy",
+        "organizations:DisablePolicyType",
+        "organizations:EnablePolicyType",
+        "organizations:InviteAccountToOrganization",
+        "organizations:ListAccounts",
+        "organizations:ListAccountsForParent",
+        "organizations:ListChildren",
+        "organizations:ListCreateAccountStatus",
+        "organizations:ListHandshakesForAccount",
+        "organizations:ListHandshakesForOrganization",
+        "organizations:ListOrganizationalUnitsForParent",
+        "organizations:ListParents",
+        "organizations:ListPolicies",
+        "organizations:ListPoliciesForTarget",
+        "organizations:ListRoots",
+        "organizations:ListTagsForResource",
+        "organizations:ListTargetsForPolicy",
+        "organizations:MoveAccount",
+        "organizations:RemoveAccountFromOrganization",
+        "organizations:UpdateOrganizationalUnit",
+        "organizations:UpdatePolicy",
+        "organizations:TagResource",
+        "organizations:UntagResource"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

@@ -1,19 +1,10 @@
-name: 'Terraform Plan and Apply for SecOps'
+name: 'Terraform Plan for SecOps'
 
 on:
-  workflow_dispatch:    # Allows manual triggering from GitHub UI
   push:
-    branches: [ main ]
-    paths:
-      - 'environments/secops/**'
-      - 'modules/**'
-      - 'policies/**'
+    branches: [test/**]  # Only run on test branches
   pull_request:
-    branches: [ main ]
-    paths:
-      - 'environments/secops/**'
-      - 'modules/**'
-      - 'policies/**'
+    branches: [main]     # Run on PRs targeting main
 
 permissions:
   id-token: write
@@ -23,9 +14,10 @@ env:
   TF_WORKING_DIR: './environments/secops'
 
 jobs:
-  terraform-secops:
-    name: 'Terraform on SecOps Account'
+  terraform-plan:
+    name: 'Terraform Plan'
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'  # Only run plan on push to test branches
 
     steps:
       - name: Checkout code
@@ -36,8 +28,7 @@ jobs:
         with:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.SECOPS_DEPLOY_ROLE_ARN }}
-          role-session-name: GitHubActions-SecOps-Deploy
-          mask-aws-account-id: true
+          role-session-name: GitHubActions-SecOps-Plan
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -58,7 +49,26 @@ jobs:
         run: terraform plan -no-color -out=tfplan
         working-directory: ${{ env.TF_WORKING_DIR }}
 
+  terraform-apply:
+    name: 'Terraform Apply'
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    needs: terraform-plan
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.SECOPS_DEPLOY_ROLE_ARN }}
+          role-session-name: GitHubActions-SecOps-Apply
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
       - name: Terraform Apply
         run: terraform apply -no-color -auto-approve tfplan
         working-directory: ${{ env.TF_WORKING_DIR }}
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'

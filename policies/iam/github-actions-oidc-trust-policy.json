@@ -9,7 +9,7 @@
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
                 "StringLike": {
-                    "token.actions.githubusercontent.com:sub": "repo:your-github-username/your-repo-name:*"
+                    "token.actions.githubusercontent.com:sub": "repo:ailojay/Perp:*"
                 }
             }
         }

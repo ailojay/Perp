@@ -4,13 +4,13 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'accounts/secops/**'   # Run only when secops code changes
+      - 'environments/secops/**'   # Run only when secops code changes
       - 'modules/**'           # Or when shared modules change
       - 'policies/**'          # Or when policies change
   pull_request:
     branches: [ main ]
     paths:
-      - 'accounts/secops/**'
+      - 'environments/secops/**'
       - 'modules/**'
       - 'policies/**'
 

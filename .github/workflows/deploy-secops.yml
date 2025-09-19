@@ -1,12 +1,13 @@
 name: 'Terraform Plan and Apply for SecOps'
 
 on:
+  workflow_dispatch:    # Allows manual triggering from GitHub UI
   push:
     branches: [ main ]
     paths:
-      - 'environments/secops/**'   # Run only when secops code changes
-      - 'modules/**'               # Or when shared modules change
-      - 'policies/**'              # Or when policies change
+      - 'environments/secops/**'
+      - 'modules/**'
+      - 'policies/**'
   pull_request:
     branches: [ main ]
     paths:
@@ -15,11 +16,11 @@ on:
       - 'policies/**'
 
 permissions:
-  id-token: write   # Required for OIDC
-  contents: read    # Required to checkout code
+  id-token: write
+  contents: read
 
 env:
-  TF_WORKING_DIR: './environments/secops'  # Define once, use everywhere
+  TF_WORKING_DIR: './environments/secops'
 
 jobs:
   terraform-secops:
@@ -49,16 +50,15 @@ jobs:
         run: terraform validate -no-color
         working-directory: ${{ env.TF_WORKING_DIR }}
 
-      - name: Terraplanform Format Check
+      - name: Terraform Format Check
         run: terraform fmt -check
         working-directory: ${{ env.TF_WORKING_DIR }}
 
       - name: Terraform Plan
         run: terraform plan -no-color -out=tfplan
         working-directory: ${{ env.TF_WORKING_DIR }}
-        if: github.event_name == 'pull_request'
 
       - name: Terraform Apply
         run: terraform apply -no-color -auto-approve tfplan
         working-directory: ${{ env.TF_WORKING_DIR }}
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'

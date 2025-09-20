@@ -2,6 +2,7 @@ name: Terraform CI - Dev
 
 on:
   push:
+    branches: [test/**] 
     paths:
       - 'environments/dev/**'
       - 'modules/**'

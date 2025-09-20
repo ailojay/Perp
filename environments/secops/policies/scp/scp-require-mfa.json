@@ -6,9 +6,7 @@
       "Action": "*",
       "Resource": "*",
       "Condition": {
-        "BoolIfExists": {
-          "aws:MultiFactorAuthPresent": "false"
-        }
+        "BoolIfExists": { "aws:MultiFactorAuthPresent": "false" }
       }
     }
   ]

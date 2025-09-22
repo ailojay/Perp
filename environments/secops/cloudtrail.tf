@@ -1,6 +1,6 @@
 # Creates the central logging bucket
 resource "aws_s3_bucket" "cloudtrail_logs" {
-  bucket        = "perp-org-cloudtrail-logs"
+  bucket        = "perp-org-logs"
   force_destroy = false
 
   tags = {

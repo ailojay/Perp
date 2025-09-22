@@ -1,5 +1,7 @@
-output "github_actions_secops_role_arn" {
-  description = "The ARN of the IAM role for GitHub Actions to assume in the SecOps account"
-  value       = aws_iam_role.github_actions_secops.arn
+output "cloudtrail_bucket_name" {
+  value = aws_s3_bucket.cloudtrail_logs.bucket
+}
 
+output "kms_key_arn" {
+  value = aws_kms_key.cloudtrail.arn
 }

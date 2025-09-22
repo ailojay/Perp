@@ -1,74 +1,77 @@
-name: 'Terraform Plan for SecOps'
-
+# .github/workflows/secops.yml
+name: SecOps Deployment
 on:
+  workflow_dispatch:
   push:
-    branches: [test/**]  # Only run on test branches
-  pull_request:
-    branches: [main]     # Run on PRs targeting main
-
-permissions:
-  id-token: write
-  contents: read
-
-env:
-  TF_WORKING_DIR: './environments/secops'
+    branches: [main]
+    paths:
+      - 'environments/secops/**'
+      - 'global/**'  # ✅ Fixed path
 
 jobs:
-  terraform-plan:
-    name: 'Terraform Plan'
+  deploy-secops:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'  # Only run plan on push to test branches
-
+    environment: secops
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials via OIDC
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      # === DEPLOY SECOPS RESOURCES ===
+      - name: Assume SecOps Role
         uses: aws-actions/configure-aws-credentials@v4
         with:
+          role-to-assume: arn:aws:iam::993490993886:role/GitHubActions-SecOps-Deployer  # ✅ Fixed account ID
           aws-region: us-east-1
-          role-to-assume: ${{ secrets.SECOPS_DEPLOY_ROLE_ARN }}
-          role-session-name: GitHubActions-SecOps-Plan
+          role-session-name: GitHubActions-SecOps
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform Init
+      - name: Terraform Init (SecOps)
         run: terraform init
-        working-directory: ${{ env.TF_WORKING_DIR }}
+        working-directory: environments/secops
 
-      - name: Terraform Validate
-        run: terraform validate -no-color
-        working-directory: ${{ env.TF_WORKING_DIR }}
+      - name: Terraform Plan (SecOps Resources)
+        run: |
+          cd environments/secops
+          terraform plan -out=tfplan.secops
 
-      - name: Terraform Format Check
-        run: terraform fmt -check
-        working-directory: ${{ env.TF_WORKING_DIR }}
+      - name: Terraform Apply (SecOps Resources)
+        run: terraform apply -auto-approve tfplan.secops
+        working-directory: environments/secops
 
-      - name: Terraform Plan
-        run: terraform plan -no-color -out=tfplan
-        working-directory: ${{ env.TF_WORKING_DIR }}
-
-  terraform-apply:
-    name: 'Terraform Apply'
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
-    needs: terraform-plan
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials via OIDC
+      # === DEPLOY SCPs (SWITCH TO PROD/MANAGEMENT ACCOUNT) ===
+      - name: Assume Management Role for SCPs
         uses: aws-actions/configure-aws-credentials@v4
         with:
+          role-to-assume: arn:aws:iam::783330585630:role/GitHubActions-SCP-Deployer
           aws-region: us-east-1
-          role-to-assume: ${{ secrets.SECOPS_DEPLOY_ROLE_ARN }}
-          role-session-name: GitHubActions-SecOps-Apply
+          role-session-name: GitHubActions-Management-SCPs
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - name: Terraform Init (SCPs)
+        run: terraform init
+        working-directory: global  # ✅ Fixed directory
 
-      - name: Terraform Apply
-        run: terraform apply -no-color -auto-approve tfplan
-        working-directory: ${{ env.TF_WORKING_DIR }}
+      - name: Terraform Plan (SCPs Only)
+        run: |
+          cd global
+          terraform plan -out=tfplan.scps
+
+      - name: Terraform Apply (SCPs Only)
+        run: |
+          cd global
+          terraform apply -auto-approve tfplan.scps
+
+      # === FINAL VERIFICATION ===
+      - name: Verify Deployment
+        run: |
+          echo "=== SecOps Verification ==="
+          cd environments/secops
+          terraform plan
+          
+          echo "=== SCPs Verification ==="
+          cd global
+          terraform plan

@@ -1,0 +1,23 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "kms:*",
+        "s3:*",
+        "cloudtrail:*",
+        "securityhub:*",
+        "guardduty:*",
+        "config:*",
+        "iam:CreateRole",
+        "iam:CreatePolicy",
+        "iam:AttachRolePolicy",
+        "iam:PutRolePolicy",
+        "logs:*",
+        "events:*"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

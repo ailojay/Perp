@@ -3,8 +3,6 @@ data "aws_organizations_organization" "this" {}
 locals {
   scp_files = toset([
     "scp-deny-disruptive.json",
-    "scp-deny-s3-public.json",
-    "scp-deny-iam-escalation.json",
     "scp-require-mfa.json"
   ])
 }

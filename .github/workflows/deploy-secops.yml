@@ -1,12 +1,12 @@
 # .github/workflows/secops.yml
-name: SecOps Deployment
+name: SecOps/Global Deployment
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
       - 'environments/secops/**'
-      - 'global/**'  # ✅ Fixed path
+      - 'global/**'
 
 jobs:
   deploy-secops:
@@ -26,22 +26,33 @@ jobs:
       - name: Assume SecOps Role
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::993490993886:role/GitHubActions-SecOps-Deployer  # ✅ Fixed account ID
+          role-to-assume: arn:aws:iam::993490993886:role/GitHubActions-SecOps-Deployer
           aws-region: us-east-1
           role-session-name: GitHubActions-SecOps
 
       - name: Terraform Init (SecOps)
-        run: terraform init
+        run: terraform init -reconfigure
         working-directory: environments/secops
 
-      - name: Terraform Plan (SecOps Resources)
-        run: |
-          cd environments/secops
-          terraform plan -out=tfplan.secops
+      - name: Terraform Plan (SecOps)
+        run: terraform plan -out=tfplan.secops
+        working-directory: environments/secops
 
-      - name: Terraform Apply (SecOps Resources)
+      - name: Terraform Apply (SecOps)
         run: terraform apply -auto-approve tfplan.secops
         working-directory: environments/secops
+
+      # === VERIFY SECOPS DEPLOYMENT ===
+      - name: Verify SecOps Deployment
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::993490993886:role/GitHubActions-SecOps-Deployer
+          aws-region: us-east-1
+          role-session-name: GitHubActions-SecOps
+      - run: |
+          echo "=== SecOps Verification ==="
+          cd environments/secops
+          terraform plan
 
       # === DEPLOY SCPs (SWITCH TO PROD/MANAGEMENT ACCOUNT) ===
       - name: Assume Management Role for SCPs
@@ -52,26 +63,25 @@ jobs:
           role-session-name: GitHubActions-Management-SCPs
 
       - name: Terraform Init (SCPs)
-        run: terraform init
-        working-directory: global  # ✅ Fixed directory
+        run: terraform init -reconfigure
+        working-directory: global
 
-      - name: Terraform Plan (SCPs Only)
-        run: |
-          cd global
-          terraform plan -out=tfplan.scps
+      - name: Terraform Plan (SCPs)
+        run: terraform plan -out=tfplan.scps
+        working-directory: global
 
-      - name: Terraform Apply (SCPs Only)
-        run: |
-          cd global
-          terraform apply -auto-approve tfplan.scps
+      - name: Terraform Apply (SCPs)
+        run: terraform apply -auto-approve tfplan.scps
+        working-directory: global
 
-      # === FINAL VERIFICATION ===
-      - name: Verify Deployment
-        run: |
-          echo "=== SecOps Verification ==="
-          cd environments/secops
-          terraform plan
-          
+      # === VERIFY SCPs DEPLOYMENT ===
+      - name: Verify SCPs Deployment
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::783330585630:role/GitHubActions-SCP-Deployer
+          aws-region: us-east-1
+          role-session-name: GitHubActions-Management-SCPs
+      - run: |
           echo "=== SCPs Verification ==="
           cd global
           terraform plan

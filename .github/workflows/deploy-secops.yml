@@ -1,6 +1,4 @@
-# .github/workflows/secops.yml
 name: SecOps/Global Deployment
-
 on:
   workflow_dispatch:
   push:
@@ -52,8 +50,8 @@ jobs:
           aws-region: us-east-1
           role-session-name: GitHubActions-Management-SCPs
 
-      - name: Terraform Init (SCPs)
-        run: terraform init
+      - name: Terraform Init (SCPs)  # Use -reconfigure only first time or if backend changes
+        run: terraform init -reconfigure
         working-directory: global
 
       - name: Terraform Plan (SCPs Only)
@@ -65,10 +63,12 @@ jobs:
         working-directory: global
 
       # === FINAL VERIFICATION ===
-      - name: Verify SecOps Deployment
-        run: terraform plan
-        working-directory: environments/secops
+      - name: Verify Deployment
+        run: |
+          echo "=== SecOps Verification ==="
+          cd environments/secops
+          terraform plan
 
-      - name: Verify SCPs Deployment
-        run: terraform plan
-        working-directory: global
+          echo "=== SCPs Verification ==="
+          cd ../../global
+          terraform plan

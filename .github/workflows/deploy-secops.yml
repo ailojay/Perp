@@ -1,3 +1,4 @@
+# .github/workflows/secops.yml
 name: SecOps/Global Deployment
 on:
   workflow_dispatch:
@@ -14,7 +15,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -34,15 +34,15 @@ jobs:
         run: terraform init
         working-directory: environments/secops
 
-      - name: Terraform Plan (SecOps Resources)
+      - name: Terraform Plan (SecOps)
         run: terraform plan -out=tfplan.secops
         working-directory: environments/secops
 
-      - name: Terraform Apply (SecOps Resources)
+      - name: Terraform Apply (SecOps)
         run: terraform apply -auto-approve tfplan.secops
         working-directory: environments/secops
 
-      # === DEPLOY SCPs (SWITCH TO PROD/MANAGEMENT ACCOUNT) ===
+      # === DEPLOY SCPs IN MANAGEMENT ACCOUNT ===
       - name: Assume Management Role for SCPs
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -50,25 +50,39 @@ jobs:
           aws-region: us-east-1
           role-session-name: GitHubActions-Management-SCPs
 
-      - name: Terraform Init (SCPs)  # Use -reconfigure only first time or if backend changes
-        run: terraform init -reconfigure
+      - name: Terraform Init (SCPs)
+        run: terraform init
         working-directory: global
 
-      - name: Terraform Plan (SCPs Only)
+      - name: Terraform Plan (SCPs)
         run: terraform plan -out=tfplan.scps
         working-directory: global
 
-      - name: Terraform Apply (SCPs Only)
+      - name: Terraform Apply (SCPs)
         run: terraform apply -auto-approve tfplan.scps
         working-directory: global
 
       # === FINAL VERIFICATION ===
-      - name: Verify Deployment
-        run: |
-          echo "=== SecOps Verification ==="
-          cd environments/secops
-          terraform plan
+      # Re-assume SecOps role before verifying SecOps backend
+      - name: Verify SecOps Deployment
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::993490993886:role/GitHubActions-SecOps-Deployer
+          aws-region: us-east-1
+          role-session-name: GitHubActions-SecOps-Verify
 
-          echo "=== SCPs Verification ==="
-          cd ../../global
-          terraform plan
+      - name: Terraform Plan (SecOps Verification)
+        run: terraform plan
+        working-directory: environments/secops
+
+      # Re-assume SCP/Management role before verifying SCPs backend
+      - name: Verify SCPs Deployment
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::783330585630:role/GitHubActions-SCP-Deployer
+          aws-region: us-east-1
+          role-session-name: GitHubActions-Management-SCPs-Verify
+
+      - name: Terraform Plan (SCPs Verification)
+        run: terraform plan
+        working-directory: global

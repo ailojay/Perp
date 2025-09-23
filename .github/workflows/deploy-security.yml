@@ -1,0 +1,52 @@
+name: SecOps/Global Deployment
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'environments/secops/**'
+      - 'global/**'
+
+jobs:
+  deploy-secops:
+    runs-on: ubuntu-latest
+    environment: secops
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      # === DEPLOY SECOPS RESOURCES ===
+      - name: Assume SecOps Role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::993490993886:role/GitHubActions-SecOps-Deployer
+          aws-region: us-east-1
+          role-session-name: GitHubActions-SecOps
+
+      - name: Terraform Init + Apply (SecOps)
+        run: |
+          cd environments/secops
+          terraform init
+          terraform plan -out=tfplan.secops
+          terraform apply -auto-approve tfplan.secops
+
+      # === DEPLOY SCPs IN MANAGEMENT ACCOUNT ===
+      - name: Assume Management Role for SCPs
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::783330585630:role/GitHubActions-SCP-Deployer
+          aws-region: us-east-1
+          role-session-name: GitHubActions-Management-SCPs
+
+      - name: Terraform Init + Apply (SCPs)
+        run: |
+          cd global
+          terraform init
+          terraform plan -out=tfplan.scps
+          terraform apply -auto-approve tfplan.scps

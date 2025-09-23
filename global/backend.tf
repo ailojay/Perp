@@ -1,9 +1,9 @@
 terraform {
   backend "s3" {
-    bucket         = "prod-secops-state"
+    bucket         = "perp-prod-state"
     key            = "global/terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "perp-secops-state-lock"
+    dynamodb_table = "perp-prod-state-lock"
     encrypt        = true
   }
 }

@@ -1,4 +1,5 @@
 name: SecOps/Global Deployment
+
 on:
   workflow_dispatch:
   push:
@@ -8,18 +9,24 @@ on:
       - 'global/**'
 
 jobs:
-  deploy-secops:
+  deploy:
     runs-on: ubuntu-latest
     environment: secops
     permissions:
       id-token: write
       contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v1
+        with:
+          tflint_version: latest
 
       # === DEPLOY SECOPS RESOURCES ===
       - name: Assume SecOps Role
@@ -29,14 +36,18 @@ jobs:
           aws-region: us-east-1
           role-session-name: GitHubActions-SecOps
 
-      - name: Terraform Init + Apply (SecOps)
+      # === SECOPS VALIDATION & APPLY ===
+      - name: Terraform Checks & Apply (SecOps)
         run: |
           cd environments/secops
+          terraform fmt -check
+          terraform validate
+          tflint
           terraform init
           terraform plan -out=tfplan.secops
           terraform apply -auto-approve tfplan.secops
 
-      # === DEPLOY SCPs IN MANAGEMENT ACCOUNT ===
+      # === DEPLOY SCPs (SWITCH TO PROD/MANAGEMENT ACCOUNT) ===
       - name: Assume Management Role for SCPs
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -44,9 +55,24 @@ jobs:
           aws-region: us-east-1
           role-session-name: GitHubActions-Management-SCPs
 
-      - name: Terraform Init + Apply (SCPs)
+      # === SCP VALIDATION & APPLY ===
+      - name: Terraform Checks & Apply (SCPs)
         run: |
           cd global
+          terraform fmt -check
+          terraform validate
+          tflint
           terraform init
           terraform plan -out=tfplan.scps
           terraform apply -auto-approve tfplan.scps
+
+      # === FINAL VERIFICATION ===
+      - name: Verify Deployment
+        run: |
+          echo "=== SecOps Verification ==="
+          cd environments/secops
+          terraform plan -lock=false
+          
+          echo "=== SCPs Verification ==="
+          cd ../../global
+          terraform plan -lock=false

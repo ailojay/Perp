@@ -23,6 +23,10 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
+      - name: Terraform Init (SecOps)
+        run: terraform init -upgrade
+        working-directory: environments/secops
+
       - name: Setup TFLint
         uses: terraform-linters/setup-tflint@v1
         with:

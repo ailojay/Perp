@@ -9,9 +9,3 @@ variable "scp_policies" {
   type        = map(string)
   default     = {}
 }
-
-variable "delegated_admin_account_id" {
-  type        = string
-  description = "The AWS Account ID that will be delegated admin for Access Analyzer"
-  default     = "993490993886"
-}

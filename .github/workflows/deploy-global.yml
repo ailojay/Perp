@@ -1,0 +1,41 @@
+name: Global / SCP Deployment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'global/**'
+
+jobs:
+  deploy-global:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v2
+      - uses: terraform-linters/setup-tflint@v1
+        with:
+          tflint_version: latest
+
+      - name: Assume Management Role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::783330585630:role/GitHubActions-SCP-Deployer
+          aws-region: us-east-1
+          role-session-name: GitHubActions-Management-SCPs
+
+      - name: Terraform Init
+        run: terraform init -upgrade
+        working-directory: global
+
+      - name: Terraform Check & Deploy
+        working-directory: global
+        run: |
+          terraform fmt -check
+          terraform validate
+          tflint
+          terraform plan -out=tfplan.scps
+          terraform apply -auto-approve tfplan.scps

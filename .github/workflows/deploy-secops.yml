@@ -1,0 +1,41 @@
+name: SecOps Deployment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'environments/secops/**'
+
+jobs:
+  deploy-secops:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v2
+      - uses: terraform-linters/setup-tflint@v1
+        with:
+          tflint_version: latest
+
+      - name: Assume SecOps Role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::993490993886:role/GitHubActions-SecOps-Deployer
+          aws-region: us-east-1
+          role-session-name: GitHubActions-SecOps
+
+      - name: Terraform Init
+        run: terraform init -upgrade
+        working-directory: environments/secops
+
+      - name: Terraform Check & Deploy
+        working-directory: environments/secops
+        run: |
+          terraform fmt -check
+          terraform validate
+          tflint
+          terraform plan -out=tfplan.secops
+          terraform apply -auto-approve tfplan.secops

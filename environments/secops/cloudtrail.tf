@@ -19,29 +19,23 @@ resource "aws_s3_bucket_public_access_block" "cloudtrail_logs" {
   restrict_public_buckets = true
 }
 
-# Attached the policy from my policy file to the bucket
+# Attach the policy from my policy file to the bucket
 resource "aws_s3_bucket_policy" "cloudtrail_logs" {
   bucket = aws_s3_bucket.cloudtrail_logs.id
 
-  # Used templatefile() to render the JSON and inject variables
   policy = templatefile("${path.module}/policies/s3-bucket/cloudtrail_logs.json", {
     bucket_name = aws_s3_bucket.cloudtrail_logs.bucket
     account_id  = data.aws_caller_identity.current.account_id
   })
 }
 
-# KMS key for encrypting CloudTrail logs
+# Default bucket encryption using SSE-S3 (AES-256)
+resource "aws_s3_bucket_server_side_encryption_configuration" "cloudtrail_logs" {
+  bucket = aws_s3_bucket.cloudtrail_logs.id
 
-resource "aws_kms_key" "cloudtrail" {
-  description             = "KMS key for encrypting CloudTrail logs"
-  deletion_window_in_days = 30
-  enable_key_rotation     = true
-  policy = templatefile("${path.module}/policies/kms/cloudtrail_key.json", {
-    account_id = data.aws_caller_identity.current.account_id
-  })
-}
-
-resource "aws_kms_alias" "cloudtrail" {
-  name          = "alias/cloudtrail-key"
-  target_key_id = aws_kms_key.cloudtrail.key_id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
 }

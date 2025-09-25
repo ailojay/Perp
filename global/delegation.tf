@@ -13,3 +13,8 @@ resource "aws_guardduty_organization_admin_account" "secops" {
 resource "aws_securityhub_organization_admin_account" "secops" {
   admin_account_id = var.secops_account_id
 }
+
+resource "aws_organizations_delegated_administrator" "config" {
+  account_id        = var.secops_account_id
+  service_principal = "config.amazonaws.com"
+}

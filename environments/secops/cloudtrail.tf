@@ -1,3 +1,6 @@
+# Fetch the current AWS account ID
+data "aws_caller_identity" "current" {}
+
 # Creates the central logging bucket
 resource "aws_s3_bucket" "cloudtrail_logs" {
   bucket        = "perp-org-logs"
@@ -6,6 +9,14 @@ resource "aws_s3_bucket" "cloudtrail_logs" {
   tags = {
     Name        = "CloudTrail Logs"
     Environment = "SecOps"
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
   }
 }
 
@@ -19,7 +30,7 @@ resource "aws_s3_bucket_public_access_block" "cloudtrail_logs" {
   restrict_public_buckets = true
 }
 
-# Attach the policy from my policy file to the bucket
+# Attach the bucket policy
 resource "aws_s3_bucket_policy" "cloudtrail_logs" {
   bucket = aws_s3_bucket.cloudtrail_logs.id
 
@@ -27,15 +38,4 @@ resource "aws_s3_bucket_policy" "cloudtrail_logs" {
     bucket_name = aws_s3_bucket.cloudtrail_logs.bucket
     account_id  = data.aws_caller_identity.current.account_id
   })
-}
-
-# Default bucket encryption using SSE-S3 (AES-256)
-resource "aws_s3_bucket_server_side_encryption_configuration" "cloudtrail_logs" {
-  bucket = aws_s3_bucket.cloudtrail_logs.id
-
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
-    }
-  }
 }

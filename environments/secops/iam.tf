@@ -19,3 +19,9 @@ resource "aws_iam_role_policy_attachment" "config_aggregator_attach" {
   role       = aws_iam_role.config_aggregator_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSConfigRoleForOrganizations"
 }
+
+# IAM Role for VPC Flow Logs
+resource "aws_iam_role" "vpc_flow_logs_role" {
+  name               = "vpc-flow-logs-role"
+  assume_role_policy = file("${path.module}/policies/iam/vpc_flow_logs_assume.json")
+}

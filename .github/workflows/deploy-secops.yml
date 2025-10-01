@@ -34,6 +34,7 @@ jobs:
       - name: Terraform Check & Deploy
         working-directory: environments/secops
         run: |
+          terraform fmt -recursive
           terraform fmt -check
           terraform validate
           tflint

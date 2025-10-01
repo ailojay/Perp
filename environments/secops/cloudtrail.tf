@@ -1,6 +1,3 @@
-# Fetch the current AWS account ID
-data "aws_caller_identity" "current" {}
-
 # Creates the central logging bucket
 resource "aws_s3_bucket" "cloudtrail_logs" {
   bucket        = "perp-org-logs"

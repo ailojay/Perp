@@ -1,11 +1,18 @@
 # Security Hub setup in SecOps account
 
 # Enables Security Hub in SecOps
-resource "aws_securityhub_account" "this" {}
+resource "aws_securityhub_account" "this" {
+    lifecycle {
+    prevent_destroy = true
+  }
+}
 
 # Enable foundational controls (CIS, PCI DSS, etc.)
 resource "aws_securityhub_standards_subscription" "cis" {
   standards_arn = "arn:aws:securityhub:${var.region}::standards/cis-aws-foundations-benchmark/v/1.2.0"
+    lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Commented out for now to because we dont handle anything related to PCI DSS yet

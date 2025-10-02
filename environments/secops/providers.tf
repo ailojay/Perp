@@ -4,7 +4,12 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 6.14" # or the version you’re using
+      version = "~> 6.14" 
     }
   }
+}
+
+provider "aws" {
+  alias  = "secops"
+  region = var.region
 }

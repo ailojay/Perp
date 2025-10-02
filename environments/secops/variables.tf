@@ -13,6 +13,12 @@ variable "environment" {
 variable "region" {
   description = "AWS region"
   type        = string
-  default     = "us-east-1"
+  default     = "us-east-1" 
+}
+
+variable "secops_account_id" {
+  description = "The AWS Account ID of the SecOps account"
+  type        = string
+  default     = "993490993886"
   
 }

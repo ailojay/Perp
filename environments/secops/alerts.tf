@@ -27,7 +27,7 @@ resource "aws_cloudwatch_event_rule" "guardduty_findings" {
   name        = "${var.environment}-guardduty-findings"
   description = "Forward GuardDuty findings to SNS"
   event_pattern = jsonencode({
-    "source": ["aws.guardduty"]
+    "source" : ["aws.guardduty"]
   })
 }
 
@@ -36,12 +36,12 @@ resource "aws_cloudwatch_event_rule" "securityhub_findings" {
   name        = "${var.environment}-securityhub-high-critical-findings"
   description = "Forward only HIGH/CRITICAL Security Hub findings to SNS"
   event_pattern = jsonencode({
-    "source": ["aws.securityhub"],
-    "detail-type": ["Security Hub Findings - Imported"],
-    "detail": {
-      "findings": {
-        "Severity": {
-          "Label": ["HIGH", "CRITICAL"]
+    "source" : ["aws.securityhub"],
+    "detail-type" : ["Security Hub Findings - Imported"],
+    "detail" : {
+      "findings" : {
+        "Severity" : {
+          "Label" : ["HIGH", "CRITICAL"]
         }
       }
     }

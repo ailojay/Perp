@@ -14,10 +14,7 @@
     {
       "Sid": "ProtectGuardDuty",
       "Effect": "Deny",
-      "Action": [
-        "guardduty:DeleteDetector",
-        "guardduty:StopMonitoringMembers"
-      ],
+      "Action": ["guardduty:DeleteDetector", "guardduty:StopMonitoringMembers"],
       "Resource": "*"
     },
     {
@@ -32,10 +29,7 @@
     {
       "Sid": "ProtectSecurityHub",
       "Effect": "Deny",
-      "Action": [
-        "securityhub:DeleteHub",
-        "securityhub:DisableSecurityHub"
-      ],
+      "Action": ["securityhub:DeleteHub", "securityhub:DisableSecurityHub"],
       "Resource": "*"
     },
     {
@@ -45,20 +39,20 @@
       "Resource": "arn:aws:s3:::*/*",
       "Condition": {
         "StringNotEqualsIfExists": {
-          "s3:x-amz-server-side-encryption": [
-            "AES256"
-          ]
+          "s3:x-amz-server-side-encryption": ["AES256"]
         }
       }
     },
     {
-      "Sid": "DenyRemovalOfBucketEncryption",
+      "Sid": "DenyUnencryptedBucketEncryption",
       "Effect": "Deny",
-      "Action": [
-        "s3:DeleteBucketEncryption",
-        "s3:PutEncryptionConfiguration"
-      ],
-      "Resource": "arn:aws:s3:::*"
+      "Action": "s3:PutEncryptionConfiguration",
+      "Resource": "arn:aws:s3:::*",
+      "Condition": {
+        "Null": {
+          "s3:x-amz-server-side-encryption": "true"
+        }
+      }
     }
   ]
 }

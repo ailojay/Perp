@@ -2,6 +2,7 @@
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "ProtectCloudTrail",
       "Effect": "Deny",
       "Action": [
         "cloudtrail:DeleteTrail",
@@ -11,6 +12,7 @@
       "Resource": "*"
     },
     {
+      "Sid": "ProtectGuardDuty",
       "Effect": "Deny",
       "Action": [
         "guardduty:DeleteDetector",
@@ -19,6 +21,7 @@
       "Resource": "*"
     },
     {
+      "Sid": "ProtectConfig",
       "Effect": "Deny",
       "Action": [
         "config:DeleteConfigurationRecorder",
@@ -27,25 +30,13 @@
       "Resource": "*"
     },
     {
+      "Sid": "ProtectSecurityHub",
       "Effect": "Deny",
       "Action": [
         "securityhub:DeleteHub",
         "securityhub:DisableSecurityHub"
       ],
       "Resource": "*"
-    },
-    {
-      "Sid": "DenyUnencryptedBucketCreation",
-      "Effect": "Deny",
-      "Action": "s3:CreateBucket",
-      "Resource": "*",
-      "Condition": {
-        "StringNotEqualsIfExists": {
-          "s3:x-amz-server-side-encryption": [
-            "AES256"
-          ]
-        }
-      }
     },
     {
       "Sid": "DenyUnencryptedObjectUploads",
@@ -67,14 +58,7 @@
         "s3:DeleteBucketEncryption",
         "s3:PutEncryptionConfiguration"
       ],
-      "Resource": "arn:aws:s3:::*",
-      "Condition": {
-        "StringNotEquals": {
-          "s3:x-amz-server-side-encryption": [
-            "AES256"
-          ]
-        }
-      }
+      "Resource": "arn:aws:s3:::*"
     }
-      ]
-    }
+  ]
+}

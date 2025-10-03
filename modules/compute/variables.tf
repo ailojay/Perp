@@ -35,4 +35,9 @@ variable "region" {
   type        = string
   default     = "us-east-1"
 }
-# SSH key removed since we're using SSM only
+
+variable "tags" {
+  description = "Tags to apply to all resources"
+  type        = map(string)
+  default     = {}
+}

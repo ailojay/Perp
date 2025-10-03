@@ -1,2 +1,25 @@
+# Architecture Diagram
 
-[text](vscode-local:/c%3A/Users/paule/Downloads/architecture.md)
+             ┌───────────────────────┐
+             │        CloudFront      │  ← Global CDN
+             └───────────▲───────────┘
+                         │
+                         ▼
+                 ┌──────────────┐
+                 │     S3        │  ← static website hosting
+                 └──────────────┘
+                         │
+      ┌──────────────────┴──────────────────┐
+      │                                     │
+      ▼                                     ▼
+┌──────────────┐                    ┌────────────────┐
+│ Public Subnet│                    │ Public Subnet  │  (multi-AZ best practice)
+│ + ALB        │                    │ + ALB (AZ2)    │
+└──────────────┘                    └────────────────┘
+       │                                       │
+       └───────────────────────────────────────┘
+                         │
+                         ▼
+                ┌───────────────────┐
+                │     VPC + IGW      │
+                └───────────────────┘

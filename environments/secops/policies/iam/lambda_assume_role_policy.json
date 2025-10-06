@@ -4,10 +4,9 @@
     {
       "Effect": "Allow",
       "Principal": {
-        "Service": "events.amazonaws.com"
+        "Service": "lambda.amazonaws.com"
       },
-      "Action": "sns:Publish",
-      "Resource": "*"
+      "Action": "sts:AssumeRole"
     }
   ]
 }

@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 # Creates the central logging bucket
 resource "aws_s3_bucket" "cloudtrail_logs" {
   bucket        = "perp-org-logs"
@@ -5,7 +7,7 @@ resource "aws_s3_bucket" "cloudtrail_logs" {
 
   tags = {
     Name        = "CloudTrail Logs"
-    Environment = "SecOps"
+    Environment = var.environment
   }
 }
 
@@ -18,7 +20,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "cloudtrail_logs" 
     }
   }
 }
-
 
 # Blocks all public access to the bucket
 resource "aws_s3_bucket_public_access_block" "cloudtrail_logs" {
@@ -34,7 +35,7 @@ resource "aws_s3_bucket_public_access_block" "cloudtrail_logs" {
 resource "aws_s3_bucket_policy" "cloudtrail_logs" {
   bucket = aws_s3_bucket.cloudtrail_logs.id
 
-  policy = templatefile("${path.module}/policies/s3-bucket/cloudtrail_logs.json", {
+  policy = templatefile("${path.root}/policies/s3-bucket/cloudtrail_logs.json", {
     bucket_name = aws_s3_bucket.cloudtrail_logs.bucket
     account_id  = data.aws_caller_identity.current.account_id
   })

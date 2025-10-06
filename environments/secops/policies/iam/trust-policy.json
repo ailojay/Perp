@@ -4,12 +4,12 @@
         {
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::891336823827:root"
+                "AWS": "arn:aws:iam::993490993886:root"
             },
             "Action": "sts:AssumeRole",
             "Condition": {
                 "ArnLike": {
-                    "aws:PrincipalArn": "arn:aws:iam::891336823827:role/GitHubActions-SecOps-Deploy"
+                    "aws:PrincipalArn": "arn:aws:iam::993490993886:role/GitHubActions-SecOps-Deploy"
                 }
             }
         }

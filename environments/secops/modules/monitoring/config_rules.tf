@@ -3,7 +3,7 @@
 # ==============================
 
 resource "aws_config_config_rule" "s3_encryption" {
-  name = "s3-bucket-server-side-encryption-enabled"
+  name = "${var.environment}-s3-bucket-server-side-encryption-enabled"
 
   source {
     owner             = "AWS"
@@ -12,7 +12,7 @@ resource "aws_config_config_rule" "s3_encryption" {
 }
 
 resource "aws_config_config_rule" "cloudtrail_enabled" {
-  name = "cloudtrail-enabled"
+  name = "${var.environment}-cloudtrail-enabled"
 
   source {
     owner             = "AWS"
@@ -21,7 +21,7 @@ resource "aws_config_config_rule" "cloudtrail_enabled" {
 }
 
 resource "aws_config_config_rule" "root_access_key" {
-  name = "iam-root-access-key-check"
+  name = "${var.environment}-iam-root-access-key-check"
 
   source {
     owner             = "AWS"
@@ -30,7 +30,7 @@ resource "aws_config_config_rule" "root_access_key" {
 }
 
 resource "aws_config_config_rule" "mfa_enabled" {
-  name = "iam-user-mfa-enabled"
+  name = "${var.environment}-iam-user-mfa-enabled"
 
   source {
     owner             = "AWS"
@@ -39,7 +39,7 @@ resource "aws_config_config_rule" "mfa_enabled" {
 }
 
 resource "aws_config_config_rule" "restricted_ssh" {
-  name = "restricted-ssh"
+  name = "${var.environment}-restricted-ssh"
 
   source {
     owner             = "AWS"
@@ -48,7 +48,7 @@ resource "aws_config_config_rule" "restricted_ssh" {
 }
 
 resource "aws_config_config_rule" "ec2_volume_inuse" {
-  name = "ec2-volume-inuse-check"
+  name = "${var.environment}-ec2-volume-inuse-check"
 
   source {
     owner             = "AWS"

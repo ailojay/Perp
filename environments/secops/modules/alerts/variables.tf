@@ -1,18 +1,9 @@
 variable "environment" {
   description = "The environment name"
   type        = string
-  default     = "secops"
 }
 
 variable "alert_email" {
   description = "Email address for SNS topic subscription"
   type        = string
-  default     = "perpproject+secops@outlook.com"
-}
-
-variable "region" {
-  description = "AWS region to deploy resources"
-  type        = string
-  default     = "us-east-1"
-
 }

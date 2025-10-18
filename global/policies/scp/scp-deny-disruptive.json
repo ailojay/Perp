@@ -27,14 +27,6 @@
       "Resource": "*"
     },
     {
-      "Effect": "Deny",
-      "Action": [
-        "securityhub:DeleteHub",
-        "securityhub:DisableSecurityHub"
-      ],
-      "Resource": "*"
-    },
-    {
       "Sid": "DenyUnencryptedObjectUploads",
       "Effect": "Deny",
       "Action": "s3:PutObject",

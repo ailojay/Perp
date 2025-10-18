@@ -1,3 +1,4 @@
+# In environments/secops/variables.tf
 variable "environment" {
   description = "The environment name"
   type        = string
@@ -14,5 +15,16 @@ variable "region" {
   description = "AWS region to deploy resources"
   type        = string
   default     = "us-east-1"
+}
 
+variable "s3_bucket_name" {
+  description = "Name of the S3 bucket for AWS Config logs"
+  type        = string
+  default     = "your-config-bucket" # Add your actual bucket
+}
+
+variable "secops_account_id" {
+  description = "The AWS account ID for the SecOps team"
+  type        = string
+  default     = "993490993886" # Replace with your actual SecOps account ID
 }

@@ -21,6 +21,7 @@ module "monitoring" {
   config_role_arn            = module.iam_roles.config_role_arn
   config_aggregator_role_arn = module.iam_roles.config_aggregator_role_arn
   s3_bucket_name             = module.logging.cloudtrail_logs_bucket_name
+  secops_account_id          = var.secops_account_id
 }
 
 module "remediation" {

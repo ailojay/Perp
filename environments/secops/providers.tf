@@ -9,7 +9,7 @@ terraform {
   }
 }
 
+# Single provider - everything deploys to us-east-1
 provider "aws" {
-  alias  = "secops"
-  region = var.region
+  region = "us-east-1"
 }

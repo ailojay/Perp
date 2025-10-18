@@ -17,3 +17,9 @@ variable "s3_bucket_name" {
   description = "Name of the S3 bucket for AWS Config logs"
   type        = string
 }
+
+variable "secops_account_id" {
+  description = "The AWS account ID for the SecOps team"
+  type        = string  
+}
+

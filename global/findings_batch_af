@@ -1,0 +1,100 @@
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-southeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.14/finding/637e8af1-6a89-4a25-a7ef-8ba7209d80b1",
+        "ProductArn": "arn:aws:securityhub:ap-southeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-southeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.13/finding/d6046fbe-bd23-43ba-9cef-d5d0bbfd0515",
+        "ProductArn": "arn:aws:securityhub:ap-southeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-southeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.12/finding/f450fafa-c75a-40f3-9026-ff7e1f10cd63",
+        "ProductArn": "arn:aws:securityhub:ap-southeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-southeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.11/finding/96edbfa4-4cd8-4626-b2bb-c9e6e9d439c0",
+        "ProductArn": "arn:aws:securityhub:ap-southeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-southeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.10/finding/d87d0654-cc4a-4d40-8143-670d0c3bd1db",
+        "ProductArn": "arn:aws:securityhub:ap-southeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-southeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.1/finding/6acdb88c-345f-46ae-a3f1-f51c091c065d",
+        "ProductArn": "arn:aws:securityhub:ap-southeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/2.5/finding/5395c759-06a2-4cb0-8140-f06567105846",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.9/finding/c919840b-088e-43cb-956a-5bb7389b450d",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.8/finding/2df04bf6-20cd-487e-9087-1c5af47c11fd",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.7/finding/673cef28-6998-4f25-a8d7-ee42a4bb2f80",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.6/finding/cc8665df-e813-4d37-9122-297b7b483fb5",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.5/finding/ceacde97-23fc-4156-af90-893b1cd6c75f",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.4/finding/487c6c26-7d5e-4904-8852-11698c4cd3a7",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.3/finding/bbaa988a-a13b-4ac2-aa59-5003640ffd73",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.2/finding/24f2a488-d4d7-4a8e-93b9-afcafd64b306",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.14/finding/3e1e7668-1e51-48a5-aefd-278941d7ef33",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.13/finding/e3375c56-4951-46bc-a325-a8705191a1dc",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.12/finding/76975838-3b15-4a11-8f55-310ce35963f5",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.11/finding/e101d7b4-1955-4ae6-92ac-e7adc48cbca6",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.10/finding/f5359539-005c-4f45-98bf-9007d5911de6",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-2:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.1/finding/16c46dbc-7635-493e-952d-4d5b3eff24af",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-southeast-2:993490993886:subscription/aws-foundational-security-best-practices/v/1.0.0/Config.1/finding/f794de20-4696-4577-a199-4a65ac1afb01",
+        "ProductArn": "arn:aws:securityhub:ap-southeast-2::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-3:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/2.5/finding/e0b573fa-7ccf-4733-96ad-0e72c3274b15",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-3::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-3:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.9/finding/1a7d27a9-7350-4c87-97cb-c0843d6c8cc1",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-3::product/aws/securityhub"
+    },
+    {
+        "Id": "arn:aws:securityhub:ap-northeast-3:993490993886:subscription/cis-aws-foundations-benchmark/v/1.2.0/3.8/finding/49531c3a-16eb-4872-83e4-34919dcf1e88",
+        "ProductArn": "arn:aws:securityhub:ap-northeast-3::product/aws/securityhub"

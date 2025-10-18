@@ -4,14 +4,14 @@ import json
 s3 = boto3.client('s3')
 securityhub = boto3.client('securityhub')
 sns = boto3.client('sns')
-
+ 
 def lambda_handler(event, context):
     # Get SNS topic from environment variable
     sns_topic_arn = 'arn:aws:sns:us-east-1:993490993886:security-alerts'
     
     for record in event.get("detail", {}).get("findings", []):
         title = record.get("Title", "")
-        
+          
         if "S3 Bucket" in title:
             bucket_name = title.split(":")[-1].strip()
             

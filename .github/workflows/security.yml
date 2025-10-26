@@ -41,8 +41,8 @@ jobs:
         with:
           directory: .
           framework: terraform
-          output_format: sarif
-          output_file_path: checkov-results.sarif
+          output_format: cli,sarif
+          output_file_path: results.sarif
           quiet: true
           soft_fail: false
 
@@ -59,7 +59,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
-          sarif_file: checkov-results.sarif
+          sarif_file: results.sarif
 
       - name: ✅ Security Validation Complete
         run: echo "Security validation completed successfully"

@@ -61,14 +61,14 @@ output "logging_details" {
   }
 }
 
-output "remediation_functions" {
-  description = "Automated remediation functions"
-  value = {
-    s3_remediation   = module.remediation.s3_remediation
-    ec2_remediation  = module.remediation.ec2_remediation
-    common_resources = module.remediation.common_resources
-  }
-}
+# output "remediation_functions" {
+#   description = "Automated remediation functions"
+#   value = {
+#     s3_remediation   = module.remediation.s3_remediation
+#     ec2_remediation  = module.remediation.ec2_remediation
+#     common_resources = module.remediation.common_resources
+#   }
+# }
 
 output "iam_roles" {
   description = "IAM roles created for SecOps"

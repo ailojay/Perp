@@ -6,7 +6,7 @@ resource "aws_lambda_function" "ec2_security_group_remediation" {
   role             = var.remediation_lambda_role_arn
   timeout          = var.lambda_timeout
   memory_size      = var.lambda_memory_size
-  source_code_hash = filebase64sha256("${path.module}/lambdas/ec2_security_group_remediation.zip")
+  # source_code_hash = filebase64sha256("${path.module}/lambdas/ec2_security_group_remediation.zip")
   
   dead_letter_config {
     target_arn = aws_sqs_queue.remediation_dlq.arn

@@ -59,15 +59,15 @@ module "logging" {
   }
 }
 
-module "remediation" {
-  source = "../../modules/security/remediation"
-
-  environment                 = var.environment
-  remediation_lambda_role_arn = module.iam_roles.remediation_lambda_role_arn
-
-  tags = {
-    Project = "perp"
-    Service = "remediation"
-  }
-}
+# module "remediation" {
+#   source = "../../modules/security/remediation"
+#
+#   environment                 = var.environment
+#   remediation_lambda_role_arn = module.iam_roles.remediation_lambda_role_arn
+#
+#   tags = {
+#     Project = "perp"
+#     Service = "remediation"
+#   }
+# }
 

@@ -20,10 +20,10 @@ resource "aws_securityhub_standards_subscription" "aws_foundational" {
 # Import existing Security Hub finding aggregator
 resource "aws_securityhub_finding_aggregator" "org_aggregator" {
   linking_mode = "ALL_REGIONS"
-  
+
   lifecycle {
     ignore_changes = all
   }
-  
+
   depends_on = [aws_securityhub_account.main]
 }

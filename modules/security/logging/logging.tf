@@ -5,7 +5,7 @@ resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   count             = var.enable_vpc_flow_logs ? 1 : 0
   name              = "/aws/vpc/flow-logs-${var.environment}"
   retention_in_days = var.log_retention_days
-  
+
   tags = var.tags
 }
 
@@ -17,7 +17,7 @@ resource "aws_flow_log" "vpc_flow_logs_cw" {
   traffic_type         = "ALL"
   vpc_id               = data.aws_vpc.default.id
   log_destination_type = "cloud-watch-logs"
-  
+
   tags = var.tags
 }
 
@@ -28,7 +28,7 @@ resource "aws_flow_log" "vpc_flow_logs_s3" {
   traffic_type         = "ALL"
   vpc_id               = data.aws_vpc.default.id
   log_destination_type = "s3"
-  
+
   tags = var.tags
 }
 

@@ -46,7 +46,7 @@ resource "aws_guardduty_filter" "high_severity_threats" {
   finding_criteria {
     criterion {
       field  = "severity"
-      equals = ["8", "9"]  # High and Critical
+      equals = ["8", "9"] # High and Critical
     }
   }
 

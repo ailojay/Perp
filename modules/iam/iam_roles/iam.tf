@@ -67,8 +67,8 @@ resource "aws_iam_account_password_policy" "strict" {
 
 # 2. Break Glass Emergency Role
 resource "aws_iam_role" "break_glass_admin" {
-  name               = "${var.environment}-BreakGlassAdministrator"
-  description        = "Break glass emergency access role"
+  name        = "${var.environment}-BreakGlassAdministrator"
+  description = "Break glass emergency access role"
   assume_role_policy = templatefile("${path.module}/../../../policies/iam/break_glass_assume_role.json", {
     account_id = data.aws_caller_identity.current.account_id
   })
@@ -87,8 +87,8 @@ resource "aws_iam_role_policy_attachment" "break_glass_admin" {
 
 # 3. Security Operations Role
 resource "aws_iam_role" "security_operations" {
-  name               = "${var.environment}-SecurityOperations"
-  description        = "Role for security team operations"
+  name        = "${var.environment}-SecurityOperations"
+  description = "Role for security team operations"
   assume_role_policy = templatefile("${path.module}/../../../policies/iam/security_operations_assume_role.json", {
     account_id = data.aws_caller_identity.current.account_id
   })

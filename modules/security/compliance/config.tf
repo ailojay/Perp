@@ -4,7 +4,7 @@ data "aws_iam_role" "config_service_role" {
 
 resource "aws_config_configuration_recorder" "main" {
   name     = "default"
-  role_arn = data.aws_iam_role.config_service_role.arn  # Use the data source
+  role_arn = data.aws_iam_role.config_service_role.arn # Use the data source
 
   recording_group {
     all_supported                 = true
@@ -30,7 +30,7 @@ resource "aws_config_configuration_aggregator" "org" {
   name = "${var.environment}-org-aggregator"
 
   organization_aggregation_source {
-    role_arn    = data.aws_iam_role.config_service_role.arn 
+    role_arn    = data.aws_iam_role.config_service_role.arn
     all_regions = false
     regions     = ["us-east-1"]
   }

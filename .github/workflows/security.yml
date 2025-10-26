@@ -1,0 +1,64 @@
+name: 🔒 Security Validation Pipeline
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  security-validation:
+    name: 🔒 Security Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.5.0"
+          terraform_wrapper: false
+
+      - name: ✅ Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: ✅ Terraform Validate
+        run: |
+          cd accounts/management && terraform init -backend=false && terraform validate
+          cd ../secops && terraform init -backend=false && terraform validate
+          cd ../workloads/dev && terraform init -backend=false && terraform validate
+
+      - name: 🔍 Security Scan with Checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: terraform
+          output_format: sarif
+          output_file_path: checkov-results.sarif
+          quiet: true
+          soft_fail: false
+
+      - name: 🔍 Security Scan with KICS
+        uses: checkmarx/kics-github-action@v1.7.0
+        with:
+          path: '.'
+          output_path: kics-results.json
+          output_formats: 'json,sarif'
+          fail_on: high,medium
+          exclude_paths: '.terraform/,.git/'
+
+      - name: 📊 Upload Security Results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: checkov-results.sarif
+
+      - name: ✅ Security Validation Complete
+        run: echo "Security validation completed successfully"

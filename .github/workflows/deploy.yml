@@ -1,9 +1,7 @@
-name: 🚀 Perp Deployment Pipeline
+name: 🚀 Deployment Pipeline
 
 on:
   push:
-    branches: [main, develop]
-  pull_request:
     branches: [main]
   workflow_dispatch:
 
@@ -18,9 +16,8 @@ env:
   AWS_REGION: us-east-1
 
 jobs:
-  # STAGE 1: SECURITY VALIDATION (Runs on every PR and push)
-  security-scan:
-    name: 🔒 Security Scan
+  security-validation:
+    name: 🔒 Security Validation
     runs-on: ubuntu-latest
     
     steps:
@@ -38,14 +35,23 @@ jobs:
 
       - name: ✅ Terraform Validate
         run: |
-          cd accounts/secops && terraform init -backend=false && terraform validate
-          cd ../management && terraform init -backend=false && terraform validate
+          cd accounts/management && terraform init -backend=false && terraform validate
+          cd ../secops && terraform init -backend=false && terraform validate
+          cd ../workloads/dev && terraform init -backend=false && terraform validate
 
-  # STAGE 2: ENVIRONMENT-SPECIFIC PLANNING (Push only)
+      - name: 🔍 Security Scan with Checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: terraform
+          output_format: sarif
+          output_file_path: checkov-results.sarif
+          quiet: true
+          soft_fail: false
+
   terraform-plan:
     name: 📋 Terraform Plan
-    needs: security-scan
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    needs: security-validation
     runs-on: ubuntu-latest
     
     strategy:
@@ -98,11 +104,9 @@ jobs:
           path: ${{ steps.config.outputs.WORKING_DIR }}/plan.tfplan
           retention-days: 1
 
-  # STAGE 3: DEPLOYMENT WITH MANUAL APPROVAL (Push only)
   deploy:
     name: 🚀 Deploy to ${{ matrix.environment }}
     needs: terraform-plan
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     
     strategy:

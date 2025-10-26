@@ -1,7 +1,7 @@
 resource "aws_lambda_function" "ec2_security_group_remediation" {
   filename         = "${path.module}/lambdas/ec2_security_group_remediation.zip"
   function_name    = "${var.environment}-ec2-security-group-remediation"
-  handler          = var.lambda_handler
+  handler          = "ec2_handler.lambda_handler"
   runtime          = var.lambda_runtime
   role             = var.remediation_lambda_role_arn
   timeout          = var.lambda_timeout

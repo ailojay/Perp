@@ -1,7 +1,7 @@
 resource "aws_lambda_function" "s3_public_bucket_fixer" {
   filename         = "${path.module}/lambdas/s3_public_bucket_fixer.zip"
   function_name    = "${var.environment}-s3-public-bucket-fixer"
-  handler          = var.lambda_handler
+  handler          = "s3_public_bucket_fixer.lambda_handler"
   runtime          = var.lambda_runtime
   role             = var.remediation_lambda_role_arn
   timeout          = var.lambda_timeout

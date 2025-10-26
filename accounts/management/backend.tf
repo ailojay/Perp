@@ -4,12 +4,10 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 6.14" # or the version you’re using
+      version = "~> 6.14"
     }
   }
-}
 
-terraform {
   backend "s3" {
     bucket         = "perp-prod-state"
     key            = "global/terraform.tfstate"

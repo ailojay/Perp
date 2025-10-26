@@ -1,3 +1,14 @@
+module "iam_roles" {
+  source = "../../modules/iam/iam_roles"
+
+  environment = var.environment
+
+  tags = {
+    Project = "perp"
+    Service = "iam"
+  }
+}
+
 module "compliance" {
   source = "../../modules/security/compliance"
   #config
@@ -57,17 +68,6 @@ module "remediation" {
   tags = {
     Project = "perp"
     Service = "remediation"
-  }
-}
-
-module "iam_roles" {
-  source = "../../modules/iam/iam_roles"
-
-  environment = var.environment
-
-  tags = {
-    Project = "perp"
-    Service = "iam"
   }
 }
 

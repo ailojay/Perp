@@ -1,0 +1,24 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenySecurityHubOutsideUSEast1",
+      "Effect": "Deny",
+      "Action": [
+        "securityhub:EnableSecurityHub",
+        "securityhub:CreateHub",
+        "securityhub:UpdateOrganizationConfiguration",
+        "securityhub:CreateMembers",
+        "securityhub:InviteMembers",
+        "securityhub:CreateFindingAggregator",
+        "securityhub:UpdateFindingAggregator"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": "us-east-1"
+        }
+      }
+    }
+  ]
+}

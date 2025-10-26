@@ -1,0 +1,53 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "S3Remediation",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutBucketPolicy",
+        "s3:DeleteBucketPolicy",
+        "s3:PutBucketPublicAccessBlock",
+        "s3:GetBucketAcl"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SecurityHubUpdate",
+      "Effect": "Allow",
+      "Action": [
+        "securityhub:BatchUpdateFindings"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SQSAccess",
+      "Effect": "Allow",
+      "Action": [
+        "sqs:SendMessage",
+        "sqs:GetQueueAttributes"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "EC2Remediation",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeSecurityGroups",
+        "ec2:RevokeSecurityGroupIngress",
+        "ec2:AuthorizeSecurityGroupIngress"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "Logs",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

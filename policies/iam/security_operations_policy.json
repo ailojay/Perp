@@ -1,0 +1,48 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "guardduty:*",
+        "securityhub:*",
+        "config:*",
+        "cloudtrail:*",
+        "logs:*",
+        "sns:*",
+        "s3:GetObject",
+        "s3:GetBucketLocation",
+        "s3:ListBucket",
+        "iam:GetRole",
+        "iam:GetRolePolicy",
+        "iam:ListRoles",
+        "iam:ListRolePolicies",
+        "iam:ListAttachedRolePolicies",
+        "lambda:GetFunction",
+        "lambda:ListFunctions",
+        "lambda:InvokeFunction",
+        "events:*",
+        "cloudwatch:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutBucketPublicAccessBlock",
+        "s3:PutBucketAcl",
+        "s3:PutBucketPolicy"
+      ],
+      "Resource": "arn:aws:s3:::*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:AuthorizeSecurityGroupIngress",
+        "ec2:RevokeSecurityGroupIngress",
+        "ec2:DescribeSecurityGroups"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

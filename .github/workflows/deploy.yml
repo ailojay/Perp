@@ -1,0 +1,145 @@
+name: 🚀 Perp Deployment Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  MANAGEMENT_ROLE_ARN: arn:aws:iam::783330585630:role/GitHubActions-SCP-Deployer
+  SECOPS_ROLE_ARN: arn:aws:iam::993490993886:role/GitHubActions-SecOps-Deployer
+  DEV_ROLE_ARN: arn:aws:iam::102382809840:role/GithubActionsDeployRole
+  AWS_REGION: us-east-1
+
+jobs:
+  # STAGE 1: SECURITY VALIDATION (Runs on every PR and push)
+  security-scan:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ✅ Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: ✅ Terraform Validate
+        run: |
+          cd accounts/secops && terraform init -backend=false && terraform validate
+          cd ../management && terraform init -backend=false && terraform validate
+
+  # STAGE 2: ENVIRONMENT-SPECIFIC PLANNING (Push only)
+  terraform-plan:
+    name: 📋 Terraform Plan
+    needs: security-scan
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        environment: [management, secops, dev]
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: 🎯 Determine Target and Role
+        id: config
+        run: |
+          if [ "${{ matrix.environment }}" == "management" ]; then
+            echo "WORKING_DIR=accounts/management" >> $GITHUB_OUTPUT
+            echo "ROLE_ARN=${{ env.MANAGEMENT_ROLE_ARN }}" >> $GITHUB_OUTPUT
+          elif [ "${{ matrix.environment }}" == "secops" ]; then
+            echo "WORKING_DIR=accounts/secops" >> $GITHUB_OUTPUT
+            echo "ROLE_ARN=${{ env.SECOPS_ROLE_ARN }}" >> $GITHUB_OUTPUT
+          else
+            echo "WORKING_DIR=accounts/workloads/dev" >> $GITHUB_OUTPUT
+            echo "ROLE_ARN=${{ env.DEV_ROLE_ARN }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 🔐 Assume ${{ matrix.environment }} Role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ steps.config.outputs.ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: GitHubActions-${{ matrix.environment }}
+
+      - name: 🏗️ Terraform Init
+        run: terraform init
+        working-directory: ${{ steps.config.outputs.WORKING_DIR }}
+
+      - name: 📋 Terraform Plan
+        run: terraform plan -out=plan.tfplan -input=false -no-color
+        working-directory: ${{ steps.config.outputs.WORKING_DIR }}
+
+      - name: 💾 Upload Plan Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-${{ matrix.environment }}
+          path: ${{ steps.config.outputs.WORKING_DIR }}/plan.tfplan
+          retention-days: 1
+
+  # STAGE 3: DEPLOYMENT WITH MANUAL APPROVAL (Push only)
+  deploy:
+    name: 🚀 Deploy to ${{ matrix.environment }}
+    needs: terraform-plan
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        environment: [management, secops, dev]
+    
+    environment: 
+      name: ${{ matrix.environment }}
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: 🎯 Determine Target and Role
+        id: config
+        run: |
+          if [ "${{ matrix.environment }}" == "management" ]; then
+            echo "WORKING_DIR=accounts/management" >> $GITHUB_OUTPUT
+            echo "ROLE_ARN=${{ env.MANAGEMENT_ROLE_ARN }}" >> $GITHUB_OUTPUT
+          elif [ "${{ matrix.environment }}" == "secops" ]; then
+            echo "WORKING_DIR=accounts/secops" >> $GITHUB_OUTPUT
+            echo "ROLE_ARN=${{ env.SECOPS_ROLE_ARN }}" >> $GITHUB_OUTPUT
+          else
+            echo "WORKING_DIR=accounts/workloads/dev" >> $GITHUB_OUTPUT
+            echo "ROLE_ARN=${{ env.DEV_ROLE_ARN }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📥 Download Plan Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan-${{ matrix.environment }}
+          path: ${{ steps.config.outputs.WORKING_DIR }}
+
+      - name: 🔐 Assume ${{ matrix.environment }} Role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ steps.config.outputs.ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: GitHubActions-${{ matrix.environment }}
+
+      - name: 🏗️ Terraform Init
+        run: terraform init
+        working-directory: ${{ steps.config.outputs.WORKING_DIR }}
+
+      - name: 🚀 Terraform Apply
+        run: terraform apply -input=false plan.tfplan
+        working-directory: ${{ steps.config.outputs.WORKING_DIR }}

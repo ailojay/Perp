@@ -40,7 +40,7 @@ module "logging" {
 
   environment            = var.environment
   s3_bucket_name         = "perp-org-logs"
-  vpc_flow_logs_role_arn = "arn:aws:iam::${var.secops_account_id}:role/${var.environment}-VPCFlowLogsRole"
+  vpc_flow_logs_role_arn = module.iam_roles.vpc_flow_logs_role_arn
 
   tags = {
     Project = "perp"
@@ -52,7 +52,7 @@ module "remediation" {
   source = "../../modules/security/remediation"
 
   environment                 = var.environment
-  remediation_lambda_role_arn = "arn:aws:iam::${var.secops_account_id}:role/${var.environment}-S3PublicBucketFixerRole"
+  remediation_lambda_role_arn = module.iam_roles.remediation_lambda_role_arn
 
   tags = {
     Project = "perp"

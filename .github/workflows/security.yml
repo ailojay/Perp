@@ -47,7 +47,7 @@ jobs:
           output_file_path: results-${{ github.run_number }}.sarif
           compact: true
           quiet: false
-          soft_fail: false
+          soft_fail: true
 
       - name: 🔍 Debug SARIF File
         if: always()

@@ -4,11 +4,17 @@ data "aws_iam_role" "config_service_role" {
 
 resource "aws_config_configuration_recorder" "main" {
   name     = "default"
-  role_arn = data.aws_iam_role.config_service_role.arn # Use the data source
+  role_arn = data.aws_iam_role.config_service_role.arn
 
   recording_group {
-    all_supported                 = true
+    all_supported                 = false
     include_global_resource_types = true
+    resource_types = [
+      "AWS::S3::Bucket",
+      "AWS::EC2::SecurityGroup",
+      "AWS::IAM::Role",
+      "AWS::EC2::Instance"
+    ]
   }
 }
 

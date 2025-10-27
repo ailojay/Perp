@@ -1,31 +1,30 @@
 # VPC Flow Logs - Logging Setup
 
-# CloudWatch Log Group for Flow Logs
+# CloudWatch Log Group for Flow Logs - Reduced retention
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
-  count             = var.enable_vpc_flow_logs ? 1 : 0
+  count             = var.enable_vpc_flow_logs && var.enable_cloudwatch_logs ? 1 : 0
   name              = "/aws/vpc/flow-logs-${var.environment}"
-  retention_in_days = var.log_retention_days
+  retention_in_days = 7
 
   tags = var.tags
 }
 
-# Enables VPC Flow Logs (CloudWatch)
-resource "aws_flow_log" "vpc_flow_logs_cw" {
-  count                = var.enable_vpc_flow_logs && var.enable_cloudwatch_logs ? 1 : 0
-  log_destination      = aws_cloudwatch_log_group.vpc_flow_logs[0].arn
-  iam_role_arn         = var.vpc_flow_logs_role_arn
-  traffic_type         = "ALL"
-  vpc_id               = data.aws_vpc.default.id
-  log_destination_type = "cloud-watch-logs"
+# Enables VPC Flow Logs (CloudWatch) - Disabled for cost optimization
+# resource "aws_flow_log" "vpc_flow_logs_cw" {
+#   count                = var.enable_vpc_flow_logs && var.enable_cloudwatch_logs ? 1 : 0
+#   log_destination      = aws_cloudwatch_log_group.vpc_flow_logs[0].arn
+#   iam_role_arn         = var.vpc_flow_logs_role_arn
+#   traffic_type         = "REJECT"
+#   vpc_id               = data.aws_vpc.default.id
+#   log_destination_type = "cloud-watch-logs"
+#   tags = var.tags
+# }
 
-  tags = var.tags
-}
-
-# Enables VPC Flow Logs (S3)
+# Enables VPC Flow Logs (S3) - REJECT traffic only
 resource "aws_flow_log" "vpc_flow_logs_s3" {
   count                = var.enable_vpc_flow_logs && var.enable_s3_logs ? 1 : 0
   log_destination      = "arn:aws:s3:::${var.s3_bucket_name}/vpc-flow-logs/"
-  traffic_type         = "ALL"
+  traffic_type         = "REJECT"
   vpc_id               = data.aws_vpc.default.id
   log_destination_type = "s3"
 
@@ -51,7 +50,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "vpc_flow_logs" {
     }
 
     expiration {
-      days = var.s3_log_expiration_days
+      days = 30
     }
   }
 }

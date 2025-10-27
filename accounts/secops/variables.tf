@@ -29,20 +29,21 @@ variable "secops_account_id" {
   default     = "993490993886" # Replace with your actual SecOps account ID
 }
 
+# Cost-optimized GuardDuty settings
 variable "enable_s3_protection" {
   description = "Enable GuardDuty S3 protection"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "enable_malware_protection" {
   description = "Enable GuardDuty malware protection"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "enable_runtime_monitoring" {
   description = "Enable GuardDuty EC2 runtime monitoring"
   type        = bool
-  default     = true
+  default     = false
 }

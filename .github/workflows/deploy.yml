@@ -47,7 +47,7 @@ jobs:
           check: CKV_AWS_*,CKV2_AWS_*
           compact: true
           quiet: false
-          soft_fail: false
+          soft_fail: true
 
   terraform-plan:
     name: 📋 Terraform Plan

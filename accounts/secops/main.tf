@@ -28,9 +28,10 @@ module "compliance" {
 module "detection" {
   source = "../../modules/security/detection"
 
-  enable_s3_protection      = var.enable_s3_protection
-  enable_malware_protection = var.enable_malware_protection
-  enable_runtime_monitoring = var.enable_runtime_monitoring
+  environment               = var.environment
+  enable_s3_protection      = false
+  enable_malware_protection = false
+  enable_runtime_monitoring = false
 }
 
 module "monitoring" {
@@ -52,6 +53,8 @@ module "logging" {
   environment            = var.environment
   s3_bucket_name         = "perp-org-logs"
   vpc_flow_logs_role_arn = module.iam_roles.vpc_flow_logs_role_arn
+  enable_cloudwatch_logs = false
+  enable_s3_logs         = true
 
   tags = {
     Project = "perp"

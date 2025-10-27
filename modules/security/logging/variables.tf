@@ -22,7 +22,7 @@ variable "enable_vpc_flow_logs" {
 variable "enable_cloudwatch_logs" {
   description = "Enable CloudWatch logging for VPC Flow Logs"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "enable_s3_logs" {

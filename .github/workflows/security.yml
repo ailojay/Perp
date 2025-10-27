@@ -48,9 +48,22 @@ jobs:
           quiet: false
           soft_fail: false
 
+      - name: 🔍 Debug SARIF File
+        if: always()
+        run: |
+          echo "Checking for SARIF file..."
+          ls -la *.sarif || echo "No SARIF files found"
+          if [ -f results.sarif ]; then
+            echo "SARIF file exists, size: $(wc -c < results.sarif) bytes"
+            echo "First 500 chars:"
+            head -c 500 results.sarif
+          else
+            echo "SARIF file not found!"
+          fi
+
       - name: 📊 Upload Security Results to GitHub
         uses: github/codeql-action/upload-sarif@v3
-        if: always()
+        if: always() && hashFiles('results.sarif') != ''
         with:
           sarif_file: results.sarif
 

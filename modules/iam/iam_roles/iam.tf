@@ -80,9 +80,15 @@ resource "aws_iam_role" "break_glass_admin" {
   })
 }
 
+resource "aws_iam_policy" "break_glass_policy" {
+  name        = "${var.environment}-BreakGlassPolicy"
+  description = "Custom break glass emergency access policy"
+  policy      = file("${path.module}/../../../policies/iam/break_glass_policy.json")
+}
+
 resource "aws_iam_role_policy_attachment" "break_glass_admin" {
   role       = aws_iam_role.break_glass_admin.name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+  policy_arn = aws_iam_policy.break_glass_policy.arn
 }
 
 # 3. Security Operations Role

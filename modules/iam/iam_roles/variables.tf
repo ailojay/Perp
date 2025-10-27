@@ -56,7 +56,7 @@ variable "max_password_age" {
 variable "password_reuse_prevention" {
   description = "Number of previous passwords to prevent reuse"
   type        = number
-  default     = 12
+  default     = 24
 }
 
 variable "hard_expiry" {

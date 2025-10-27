@@ -1,0 +1,32 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:*",
+                "organizations:*",
+                "account:*",
+                "billing:*",
+                "support:*",
+                "trustedadvisor:*",
+                "config:*",
+                "cloudtrail:*",
+                "logs:*",
+                "s3:*",
+                "ec2:*",
+                "vpc:*",
+                "guardduty:*",
+                "securityhub:*",
+                "access-analyzer:*",
+                "cloudformation:*",
+                "lambda:*",
+                "events:*",
+                "sns:*",
+                "sqs:*",
+                "kms:*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}

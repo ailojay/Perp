@@ -1,143 +1,174 @@
-# Perp
-This is my AWS perp project repo to replicate a working enviroment
-
-# 🛡️ Enterprise AWS Security & DevOps Showcase
+# 🛡️ Perp - Enterprise AWS Security & DevOps Showcase
 
 ## Overview
-A production-grade, multi-account AWS environment demonstrating security best practices, fully managed via Infrastructure-as-Code (Terraform) and automated DevSecOps pipelines (GitHub Actions).
+A production-grade, multi-account AWS environment demonstrating enterprise security best practices, fully managed via Infrastructure-as-Code (Terraform) and automated DevSecOps pipelines (GitHub Actions).
 
-## Architecture
-![Architecture Diagram](docs/images/architecture-diagram.png)
+## 🏗️ Architecture
 
-## Features
-- **Secure Foundation**: AWS Organizations with SCPs preventing harmful actions
-- **Centralized Security**: GuardDuty, Security Hub, and AWS Config aggregated into dedicated SecOps account
-- **DevSecOps Pipeline**: Automated Terraform planning, validation, and security scanning (Checkov, KICS) on every PR
-- **GitHub OIDC Integration**: Secure authentication without stored credentials
+### Multi-Account Structure
+- **Management Account** (783330585630) - AWS Organizations, SCPs, CloudTrail
+- **SecOps Account** (993490993886) - Security Hub, GuardDuty, Config, Monitoring
+- **Dev Account** (102382809840) - Development workloads and infrastructure
 
-## Quick Start
+### Security-First Design
+- **Modular Terraform** - Reusable security modules
+- **Compliance Focused** - CIS and AWS Foundational standards
+- **Zero-Trust Networking** - IMDSv2, restricted security groups
+- **Automated Remediation** - Lambda functions for security violations
+
+---
+
+## 🚀 Features
+
+### 🔒 Security Modules
+- **Compliance** - Security Hub with CIS and AWS Foundational standards
+- **Detection** - GuardDuty with S3, malware, and runtime monitoring
+- **Monitoring** - SNS alerts, EventBridge rules, CloudWatch alarms
+- **Logging** - VPC Flow Logs to CloudWatch and S3
+- **Remediation** - Automated Lambda functions for S3 and EC2 violations
+
+### 🔧 Infrastructure Modules
+- **Compute** - EC2 with SSM, IMDSv2, detailed monitoring
+- **Network** - VPC, subnets, security groups, NAT gateways
+- **Storage** - S3 with encryption, versioning, lifecycle policies
+- **Global** - CloudTrail with SNS notifications
+
+### 🤖 DevSecOps Pipelines
+- **Security Validation** - CIS/AWS Foundational compliance scanning
+- **Deployment Pipeline** - Multi-account Terraform deployment
+- **Drift Detection** - Automated infrastructure drift monitoring
+- **OIDC Authentication** - Secure GitHub Actions without stored credentials
+
+---
+
+## 📁 Project Structure
+
+```
+Perp/
+├── accounts/
+│   ├── management/          # Management account resources
+│   ├── secops/             # Security operations account
+│   └── workloads/dev/      # Development account
+├── modules/
+│   ├── security/           # Security-focused modules
+│   │   ├── compliance/     # Security Hub configuration
+│   │   ├── detection/      # GuardDuty setup
+│   │   ├── monitoring/     # SNS, EventBridge, CloudWatch
+│   │   ├── logging/        # VPC Flow Logs
+│   │   └── remediation/    # Lambda remediation functions
+│   ├── infrastructure/     # Infrastructure modules
+│   │   ├── compute/        # EC2 instances
+│   │   ├── network/        # VPC, subnets, security groups
+│   │   ├── storage/        # S3 buckets
+│   │   └── s3_site/        # Static website hosting
+│   ├── iam/               # IAM roles and policies
+│   └── global/            # CloudTrail, organization-wide resources
+├── policies/              # JSON policy templates
+│   ├── iam/              # IAM policies
+│   ├── s3-bucket/        # S3 bucket policies
+│   └── scp/              # Service Control Policies
+└── .github/workflows/     # CI/CD pipelines
+    ├── security.yml       # Security validation
+    ├── deploy.yml         # Multi-account deployment
+    └── drift-detection.yml # Infrastructure drift monitoring
+```
+
+---
+
+## 🛠️ Quick Start
+
+### Prerequisites
+- AWS CLI configured with appropriate permissions
+- Terraform >= 1.5.0
+- GitHub repository with OIDC configured
+
+### Deployment
 ```bash
 git clone https://github.com/ailojay/Perp.git
 cd Perp
-terraform -chdir=environments/secops init
-terraform -chdir=environments/secops plan
 
+# Deploy management account (SCPs, CloudTrail)
+cd accounts/management
+terraform init
+terraform plan
+terraform apply
 
+# Deploy SecOps account (Security Hub, GuardDuty)
+cd ../secops
+terraform init
+terraform plan
+terraform apply
 
-
-
-
-
-
-
-# Perp Cloud Security Project
-
-## Overview
-
-This project showcases a **minimal yet functional AWS SecOps infrastructure**, built with Terraform. The goal is to demonstrate practical Cloud Security skills, focusing on centralized logging, governance, and delegation of security services across accounts.  
-
-The setup covers:
-
-- SecOps account resources  
-- Global account policies and Service Control Policies (SCPs)  
-- CloudTrail centralized logging  
-- AWS Config for compliance monitoring  
-- Delegated administration for security services (GuardDuty, Security Hub, Access Analyzer, and Config)  
-- IAM roles and permissions for automation via GitHub Actions  
-
-This project is designed to be **concise, clear, and practical**, highlighting an ability to manage cloud security without overcomplicating the environment.
+# Deploy dev account (workloads)
+cd ../workloads/dev
+terraform init
+terraform plan
+terraform apply
+```
 
 ---
 
-## Terraform Components
+## 🔍 Security & Compliance
 
-### 1. SecOps Environment
+### Compliance Frameworks
+- **CIS AWS Foundations Benchmark** - Industry standard security baseline
+- **AWS Foundational Security Best Practices** - AWS recommended controls
 
-**Key Resources:**
+### Security Controls
+- **IMDSv2 Enforcement** - Prevents SSRF attacks on EC2 metadata
+- **S3 Security** - Encryption, versioning, access logging, lifecycle policies
+- **Network Security** - Restricted security groups, private subnets
+- **IAM Security** - Custom break-glass policies, password policies
+- **Monitoring** - CloudTrail, VPC Flow Logs, GuardDuty alerts
 
-- **S3 Bucket**: Central logging bucket (`perp-org-logs`)  
-  - Blocks public access  
-  - Server-side encryption (AES256)  
-  - Policy attached via `policies/s3-bucket/cloudtrail_logs.json`  
-
-- **CloudTrail**: Centralized logging across the SecOps account  
-
-- **AWS Config**: Compliance monitoring  
-  - Records all supported and global resource types  
-  - Delivery channel sends logs to the SecOps bucket  
-  - Aggregator configured for organization-wide aggregation  
-
-- **GuardDuty**: Threat detection, with SecOps as the organization admin  
-
-- **Security Hub**: Central security posture monitoring, with SecOps as the organization admin  
-
-- **IAM Roles**:  
-  - `config_role` for AWS Config  
-  - `secops_role` for GitHub Actions automation  
-
-- **Config Rules**:  
-  - `iam-user-mfa-enabled` to ensure all IAM users have MFA  
+### Automated Remediation
+- **S3 Public Bucket Fixer** - Automatically secures public S3 buckets
+- **EC2 Security Group Remediation** - Fixes overly permissive security groups
+- **EventBridge Integration** - Real-time security event processing
 
 ---
 
-### 2. Global Account
+## 🚀 CI/CD Pipelines
 
-**Key Resources:**
+### Security Validation Pipeline
+- **Triggers**: Every PR and push
+- **Scans**: CIS and AWS Foundational compliance
+- **Blocks**: Deployment on security violations
+- **Reports**: GitHub Security tab integration
 
-- **Service Control Policies (SCPs)**  
-  - Prevent disruptive actions like deleting CloudTrail, stopping Config, or creating unencrypted S3 buckets  
+### Deployment Pipeline
+- **Triggers**: Push to main branch
+- **Stages**: Security validation → Planning → Deployment
+- **Environments**: Management → SecOps → Dev
+- **Approval**: Manual approval gates for production
 
-- **Delegated Administrators**  
-  - AWS Config  
-  - Security Hub  
-  - GuardDuty  
-  - Access Analyzer  
-
-- **Organization Setup**  
-  - Ensures all AWS services are enabled for delegation  
-
----
-
-### 3. GitHub Actions Workflow
-
-**File**: `.github/workflows/secops.yml`  
-
-**Highlights:**
-
-- Triggered on `push` to `main` affecting `environments/secops/**` or `global/**`  
-- Deploys SecOps resources first, then switches to the management/prod account for SCPs and delegation  
-- Performs Terraform checks:  
-  - `terraform fmt -check`  
-  - `terraform validate`  
-  - `tflint`  
-  - `terraform plan`  
-  - `terraform apply`  
-- Performs final verification with `terraform plan -lock=false`  
+### Drift Detection Pipeline
+- **Schedule**: Weekdays at 8 AM UTC
+- **Monitors**: Infrastructure drift across all accounts
+- **Alerts**: GitHub issues for detected changes
+- **Reports**: Detailed drift analysis and remediation steps
 
 ---
 
-### 4. Policies Folder
+## 🎯 Key Design Decisions
 
-- All IAM and S3 bucket policies stored in **JSON templates**  
-- Keeps Terraform code clean, readable, and modular  
-
----
-
-## Key Design Decisions
-
-1. **Minimal, functional architecture**  
-   - Demonstrates SecOps skills without unnecessary complexity  
-
-2. **Server-side encryption for S3**  
-   - Simpler than using KMS keys, easier to maintain  
-
-3. **Delegated administration**  
-   - Centralizes management of GuardDuty, Security Hub, AWS Config, and Access Analyzer  
-
-4. **Terraform backend**  
-   - Uses S3 with lockfile for state management  
-
-5. **CI/CD Automation**  
-   - GitHub Actions workflow handles validation, linting, plan, and apply  
+1. **Modular Architecture** - Reusable security and infrastructure modules
+2. **Security-First** - CIS compliance and AWS best practices enforced
+3. **Multi-Account Strategy** - Isolation and delegation of security services
+4. **Automation-Driven** - GitOps workflow with security gates
+5. **Compliance-Ready** - Built for enterprise security requirements
+6. **Cost-Optimized** - S3 lifecycle policies, efficient resource usage
+7. **Monitoring-Enabled** - Comprehensive logging and alerting
 
 ---
+
+## 📊 Monitoring & Alerting
+
+- **Security Hub** - Centralized security posture dashboard
+- **GuardDuty** - Threat detection and malware scanning
+- **CloudTrail** - API call logging with SNS notifications
+- **VPC Flow Logs** - Network traffic analysis
+- **EventBridge** - Real-time security event processing
+- **SNS Alerts** - Security findings notifications
+
+This project demonstrates enterprise-grade AWS security architecture with automated compliance, monitoring, and remediation capabilities.

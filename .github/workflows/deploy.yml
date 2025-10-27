@@ -44,9 +44,9 @@ jobs:
         with:
           directory: .
           framework: terraform
-          output_format: cli,sarif
-          output_file_path: results.sarif
-          quiet: true
+          check: CKV_AWS_*,CKV2_AWS_*
+          compact: true
+          quiet: false
           soft_fail: false
 
   terraform-plan:

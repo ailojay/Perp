@@ -1,6 +1,6 @@
 output "vpc_flow_logs_cloudwatch_group" {
   description = "CloudWatch log group for VPC Flow Logs"
-  value       = var.enable_vpc_flow_logs ? aws_cloudwatch_log_group.vpc_flow_logs[0].name : null
+  value       = var.enable_vpc_flow_logs && var.enable_cloudwatch_logs && length(aws_cloudwatch_log_group.vpc_flow_logs) > 0 ? aws_cloudwatch_log_group.vpc_flow_logs[0].name : null
 }
 
 output "vpc_flow_logs_s3_destination" {

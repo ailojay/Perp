@@ -41,16 +41,10 @@ resource "aws_s3_bucket_policy" "cloudtrail_logs" {
   })
 }
 
-# Data source for existing security-alerts SNS topic
-data "aws_sns_topic" "security_alerts" {
-  name = "security-alerts"
-}
-
-# Organization CloudTrail Trail
+# Organization CloudTrail Trail (no SNS for cost optimization)
 resource "aws_cloudtrail" "organization_trail" {
   name                          = var.trail_name
   s3_bucket_name                = aws_s3_bucket.cloudtrail_logs.id
-  sns_topic_name                = data.aws_sns_topic.security_alerts.arn
   include_global_service_events = true
   is_multi_region_trail         = true
   is_organization_trail         = true

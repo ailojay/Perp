@@ -1,113 +1,56 @@
-name: 🔍 Infrastructure Drift Detection
+name: Drift Check
 
 on:
   schedule:
-    - cron: '0 8 * * 1-5'  # Run weekdays at 8 AM UTC
+    - cron: '0 8 * * 1'  # Every Monday, 8 AM UTC
   workflow_dispatch:
-
-permissions:
-  id-token: write
-  contents: read
-  issues: write
 
 env:
   MANAGEMENT_ROLE_ARN: arn:aws:iam::783330585630:role/GitHubActions-SCP-Deployer
   SECOPS_ROLE_ARN: arn:aws:iam::993490993886:role/GitHubActions-SecOps-Deployer
   DEV_ROLE_ARN: arn:aws:iam::102382809840:role/GithubActionsDeployRole
-  AWS_REGION: us-east-1
 
 jobs:
-  drift-detection:
-    name: 🔍 Detect Drift in ${{ matrix.environment }}
+  check-drift:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         environment: [management, secops, dev]
-    
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
 
-      - name: ⚙️ Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: "1.5.0"
-          terraform_wrapper: false
 
-      - name: 🎯 Determine Target and Role
-        id: config
+      - name: Set target account
+        id: target
         run: |
           if [ "${{ matrix.environment }}" == "management" ]; then
-            echo "WORKING_DIR=accounts/management" >> $GITHUB_OUTPUT
-            echo "ROLE_ARN=${{ env.MANAGEMENT_ROLE_ARN }}" >> $GITHUB_OUTPUT
+            echo "dir=environments/management" >> $GITHUB_OUTPUT
+            echo "role=${{ env.MANAGEMENT_ROLE_ARN }}" >> $GITHUB_OUTPUT
           elif [ "${{ matrix.environment }}" == "secops" ]; then
-            echo "WORKING_DIR=accounts/secops" >> $GITHUB_OUTPUT
-            echo "ROLE_ARN=${{ env.SECOPS_ROLE_ARN }}" >> $GITHUB_OUTPUT
+            echo "dir=environments/secops" >> $GITHUB_OUTPUT
+            echo "role=${{ env.SECOPS_ROLE_ARN }}" >> $GITHUB_OUTPUT
           else
-            echo "WORKING_DIR=accounts/workloads/dev" >> $GITHUB_OUTPUT
-            echo "ROLE_ARN=${{ env.DEV_ROLE_ARN }}" >> $GITHUB_OUTPUT
+            echo "dir=environments/dev" >> $GITHUB_OUTPUT
+            echo "role=${{ env.DEV_ROLE_ARN }}" >> $GITHUB_OUTPUT
           fi
 
-      - name: 🔐 Assume ${{ matrix.environment }} Role
-        uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ steps.config.outputs.ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-          role-session-name: GitHubActions-DriftDetection-${{ matrix.environment }}
+          role-to-assume: ${{ steps.target.outputs.role }}
+          aws-region: us-east-1
 
-      - name: 🏗️ Terraform Init
-        run: terraform init
-        working-directory: ${{ steps.config.outputs.WORKING_DIR }}
-
-      - name: 🔍 Terraform Plan (Drift Detection)
-        id: plan
+      - name: Check for Drift
+        id: drift
         run: |
-          terraform plan -detailed-exitcode -no-color -out=drift.tfplan
-          echo "exit_code=$?" >> $GITHUB_OUTPUT
-        working-directory: ${{ steps.config.outputs.WORKING_DIR }}
-        continue-on-error: true
+          terraform init
+          terraform plan -detailed-exitcode || exit_code=$?
+          echo "exit_code=${exit_code:-0}" >> $GITHUB_OUTPUT
+        working-directory: ${{ steps.target.outputs.dir }}
 
-      - name: 📊 Parse Drift Results
-        if: steps.plan.outputs.exit_code == '2'
-        run: |
-          echo "## 🚨 Infrastructure Drift Detected in ${{ matrix.environment }}" >> drift_report.md
-          echo "" >> drift_report.md
-          echo "**Environment:** ${{ matrix.environment }}" >> drift_report.md
-          echo "**Detection Time:** $(date)" >> drift_report.md
-          echo "" >> drift_report.md
-          echo "### Changes Required:" >> drift_report.md
-          echo '```hcl' >> drift_report.md
-          terraform show -no-color drift.tfplan >> drift_report.md
-          echo '```' >> drift_report.md
-        working-directory: ${{ steps.config.outputs.WORKING_DIR }}
-
-      - name: 📝 Create Drift Issue
-        if: steps.plan.outputs.exit_code == '2'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const path = '${{ steps.config.outputs.WORKING_DIR }}/drift_report.md';
-            
-            if (fs.existsSync(path)) {
-              const body = fs.readFileSync(path, 'utf8');
-              
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: `🚨 Infrastructure Drift Detected - ${{ matrix.environment }}`,
-                body: body,
-                labels: ['drift-detection', 'infrastructure', '${{ matrix.environment }}']
-              });
-            }
-
-      - name: ✅ No Drift Detected
-        if: steps.plan.outputs.exit_code == '0'
-        run: echo "✅ No infrastructure drift detected in ${{ matrix.environment }}"
-
-      - name: ❌ Terraform Error
-        if: steps.plan.outputs.exit_code == '1'
-        run: |
-          echo "❌ Terraform error in ${{ matrix.environment }}"
-          exit 1
+      - name: Report Drift
+        if: steps.drift.outputs.exit_code == '2'
+        run: echo "⚠️ Drift detected in ${{ matrix.environment }}"

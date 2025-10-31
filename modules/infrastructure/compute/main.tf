@@ -1,4 +1,4 @@
-# IAM role for SSM access
+# Create an IAM role that allows EC2 instances to use Systems Manager for remote access
 resource "aws_iam_role" "ssm_role" {
   name = "${var.project_name}-${var.environment}-ssm-role"
 
@@ -16,19 +16,19 @@ resource "aws_iam_role" "ssm_role" {
   })
 }
 
-# Attach the AWS managed policy for SSM
+# Give the IAM role permission to use Systems Manager by attaching AWS's managed policy
 resource "aws_iam_role_policy_attachment" "ssm_policy" {
   role       = aws_iam_role.ssm_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-# IAM instance profile
+# Create an instance profile so the EC2 instance can use the IAM role
 resource "aws_iam_instance_profile" "ssm_profile" {
   name = "${var.project_name}-${var.environment}-ssm-profile"
   role = aws_iam_role.ssm_role.name
 }
 
-# EC2 instance with SSM (No SSH key)
+# Launch an EC2 instance that can be accessed via Systems Manager instead of SSH keys
 resource "aws_instance" "this" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
@@ -36,10 +36,10 @@ resource "aws_instance" "this" {
   vpc_security_group_ids = [var.security_group_id]
   monitoring             = var.environment == "prod" ? true : false
 
-  # SSM configuration (no key_name needed)
+  # Attach the instance profile so this EC2 can use Systems Manager
   iam_instance_profile = aws_iam_instance_profile.ssm_profile.name
 
-  # Enforce IMDSv2 for security
+  # Force the instance to use IMDSv2 for better security against SSRF attacks
   metadata_options {
     http_endpoint               = "enabled"
     http_tokens                 = "required"

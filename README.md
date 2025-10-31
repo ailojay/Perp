@@ -9,6 +9,7 @@ A production-grade, multi-account AWS environment demonstrating enterprise secur
 - **Management Account** (783330585630) - AWS Organizations, SCPs, CloudTrail
 - **SecOps Account** (993490993886) - Security Hub, GuardDuty, Config, Monitoring
 - **Dev Account** (102382809840) - Development workloads and infrastructure
+- **Prod Account** - Production patterns (commented out for cost optimization)
 
 ### Security-First Design
 - **Modular Terraform** - Reusable security modules
@@ -45,10 +46,11 @@ A production-grade, multi-account AWS environment demonstrating enterprise secur
 
 ```
 Perp/
-├── accounts/
+├── environments/
 │   ├── management/          # Management account resources
 │   ├── secops/             # Security operations account
-│   └── workloads/dev/      # Development account
+│   ├── dev/                # Development account
+│   └── prod/               # Production account
 ├── modules/
 │   ├── security/           # Security-focused modules
 │   │   ├── compliance/     # Security Hub configuration
@@ -66,7 +68,17 @@ Perp/
 ├── policies/              # JSON policy templates
 │   ├── iam/              # IAM policies
 │   ├── s3-bucket/        # S3 bucket policies
-│   └── scp/              # Service Control Policies
+│   ├── scp/              # Service Control Policies
+│   └── remediation/      # Lambda remediation policies
+├── docs/                 # Comprehensive documentation
+│   ├── architecture/     # Architecture diagrams and design
+│   ├── compliance/       # Security standards mapping
+│   ├── incident-response/ # Security incident procedures
+│   └── runbooks/         # Operational procedures
+├── scripts/              # Automation and maintenance scripts
+│   ├── deployment/       # Deployment utilities
+│   ├── maintenance/      # Cleanup and maintenance
+│   └── security/         # Security validation tools
 └── .github/workflows/     # CI/CD pipelines
     ├── security.yml       # Security validation
     ├── deploy.yml         # Multi-account deployment
@@ -88,7 +100,7 @@ git clone https://github.com/ailojay/Perp.git
 cd Perp
 
 # Deploy management account (SCPs, CloudTrail)
-cd accounts/management
+cd environments/management
 terraform init
 terraform plan
 terraform apply
@@ -100,7 +112,7 @@ terraform plan
 terraform apply
 
 # Deploy dev account (workloads)
-cd ../workloads/dev
+cd ../dev
 terraform init
 terraform plan
 terraform apply
@@ -132,9 +144,9 @@ terraform apply
 
 ### Security Validation Pipeline
 - **Triggers**: Every PR and push
-- **Scans**: CIS and AWS Foundational compliance
-- **Blocks**: Deployment on security violations
-- **Reports**: GitHub Security tab integration
+- **Scans**: Terraform security best practices (Checkov)
+- **Validates**: Syntax, formatting, and security configurations
+- **Reports**: Security findings in PR comments
 
 ### Deployment Pipeline
 - **Triggers**: Push to main branch
@@ -147,6 +159,20 @@ terraform apply
 - **Monitors**: Infrastructure drift across all accounts
 - **Alerts**: GitHub issues for detected changes
 - **Reports**: Detailed drift analysis and remediation steps
+
+---
+
+## 🛠️ Development Tools
+
+### Code Quality
+- **Pre-commit Hooks** - Terraform formatting, security scanning
+- **Terraform Validation** - Syntax and best practices checking
+- **Security Scanning** - Built-in security validation in CI/CD
+
+### Operational Scripts
+- **Deployment Tools** - Quick status checks and deployment utilities
+- **Security Validation** - Automated security foundation testing
+- **Maintenance Scripts** - Resource cleanup and drift detection
 
 ---
 

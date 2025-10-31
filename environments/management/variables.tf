@@ -11,7 +11,7 @@ variable "secops_account_id" {
 }
 
 variable "dev_account_id" {
-  description = "The AWS account ID for the development account"
+  description = "The AWS account ID for the testing account"
   type        = string
   default     = "102382809840"
 }

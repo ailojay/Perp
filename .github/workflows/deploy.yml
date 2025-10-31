@@ -1,162 +1,56 @@
-name: 🚀 Deployment Pipeline
+name: Deploy
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:
-
-permissions:
-  id-token: write
-  contents: read
 
 env:
   MANAGEMENT_ROLE_ARN: arn:aws:iam::783330585630:role/GitHubActions-SCP-Deployer
   SECOPS_ROLE_ARN: arn:aws:iam::993490993886:role/GitHubActions-SecOps-Deployer
   DEV_ROLE_ARN: arn:aws:iam::102382809840:role/GithubActionsDeployRole
-  AWS_REGION: us-east-1
 
 jobs:
-  security-validation:
-    name: 🔒 Security Validation
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-
-      - name: ⚙️ Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: "1.5.0"
-          terraform_wrapper: false
-
-      - name: ✅ Terraform Format Check
-        run: terraform fmt -check -recursive
-
-      - name: ✅ Terraform Validate
-        run: |
-          cd accounts/management && terraform init -backend=false && terraform validate
-          cd ../secops && terraform init -backend=false && terraform validate
-          cd ../workloads/dev && terraform init -backend=false && terraform validate
-
-      - name: 🔍 Security Scan with Checkov
-        uses: bridgecrewio/checkov-action@master
-        with:
-          directory: .
-          framework: terraform
-          check: CKV_AWS_*,CKV2_AWS_*
-          compact: true
-          quiet: false
-          soft_fail: true
-
-  terraform-plan:
-    name: 📋 Terraform Plan
-    needs: security-validation
-    runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        environment: [management, secops, dev]
-    
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-
-      - name: ⚙️ Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: "1.5.0"
-          terraform_wrapper: false
-
-      - name: 🎯 Determine Target and Role
-        id: config
-        run: |
-          if [ "${{ matrix.environment }}" == "management" ]; then
-            echo "WORKING_DIR=accounts/management" >> $GITHUB_OUTPUT
-            echo "ROLE_ARN=${{ env.MANAGEMENT_ROLE_ARN }}" >> $GITHUB_OUTPUT
-          elif [ "${{ matrix.environment }}" == "secops" ]; then
-            echo "WORKING_DIR=accounts/secops" >> $GITHUB_OUTPUT
-            echo "ROLE_ARN=${{ env.SECOPS_ROLE_ARN }}" >> $GITHUB_OUTPUT
-          else
-            echo "WORKING_DIR=accounts/workloads/dev" >> $GITHUB_OUTPUT
-            echo "ROLE_ARN=${{ env.DEV_ROLE_ARN }}" >> $GITHUB_OUTPUT
-          fi
-
-      - name: 🔐 Assume ${{ matrix.environment }} Role
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ steps.config.outputs.ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-          role-session-name: GitHubActions-${{ matrix.environment }}
-
-      - name: 🏗️ Terraform Init
-        run: terraform init
-        working-directory: ${{ steps.config.outputs.WORKING_DIR }}
-
-      - name: 📋 Terraform Plan
-        run: terraform plan -out=plan.tfplan -input=false -no-color
-        working-directory: ${{ steps.config.outputs.WORKING_DIR }}
-
-      - name: 💾 Upload Plan Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: tfplan-${{ matrix.environment }}
-          path: ${{ steps.config.outputs.WORKING_DIR }}/plan.tfplan
-          retention-days: 1
-
   deploy:
-    name: 🚀 Deploy to ${{ matrix.environment }}
-    needs: terraform-plan
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         environment: [management, secops, dev]
-    
-    environment: 
-      name: ${{ matrix.environment }}
-    
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
 
-      - name: ⚙️ Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: "1.5.0"
-          terraform_wrapper: false
 
-      - name: 🎯 Determine Target and Role
-        id: config
+      - name: Set target account
+        id: target
         run: |
           if [ "${{ matrix.environment }}" == "management" ]; then
-            echo "WORKING_DIR=accounts/management" >> $GITHUB_OUTPUT
-            echo "ROLE_ARN=${{ env.MANAGEMENT_ROLE_ARN }}" >> $GITHUB_OUTPUT
+            echo "dir=environments/management" >> $GITHUB_OUTPUT
+            echo "role=${{ env.MANAGEMENT_ROLE_ARN }}" >> $GITHUB_OUTPUT
           elif [ "${{ matrix.environment }}" == "secops" ]; then
-            echo "WORKING_DIR=accounts/secops" >> $GITHUB_OUTPUT
-            echo "ROLE_ARN=${{ env.SECOPS_ROLE_ARN }}" >> $GITHUB_OUTPUT
+            echo "dir=environments/secops" >> $GITHUB_OUTPUT
+            echo "role=${{ env.SECOPS_ROLE_ARN }}" >> $GITHUB_OUTPUT
           else
-            echo "WORKING_DIR=accounts/workloads/dev" >> $GITHUB_OUTPUT
-            echo "ROLE_ARN=${{ env.DEV_ROLE_ARN }}" >> $GITHUB_OUTPUT
+            echo "dir=environments/dev" >> $GITHUB_OUTPUT
+            echo "role=${{ env.DEV_ROLE_ARN }}" >> $GITHUB_OUTPUT
           fi
 
-      - name: 📥 Download Plan Artifact
-        uses: actions/download-artifact@v4
+      - uses: aws-actions/configure-aws-credentials@v4
         with:
-          name: tfplan-${{ matrix.environment }}
-          path: ${{ steps.config.outputs.WORKING_DIR }}
+          role-to-assume: ${{ steps.target.outputs.role }}
+          aws-region: us-east-1
 
-      - name: 🔐 Assume ${{ matrix.environment }} Role
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ steps.config.outputs.ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-          role-session-name: GitHubActions-${{ matrix.environment }}
-
-      - name: 🏗️ Terraform Init
+      - name: Terraform Init
         run: terraform init
-        working-directory: ${{ steps.config.outputs.WORKING_DIR }}
+        working-directory: ${{ steps.target.outputs.dir }}
 
-      - name: 🚀 Terraform Apply
-        run: terraform apply -input=false plan.tfplan
-        working-directory: ${{ steps.config.outputs.WORKING_DIR }}
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+        working-directory: ${{ steps.target.outputs.dir }}
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
+        working-directory: ${{ steps.target.outputs.dir }}

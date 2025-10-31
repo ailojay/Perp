@@ -1,1 +1,0 @@
-Trigger security scan - testing SARIF upload functionality

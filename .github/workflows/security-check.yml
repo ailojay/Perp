@@ -33,7 +33,9 @@ jobs:
           download_external_modules: true
           skip_check: ""
           output_format: sarif
-          output_file_path: checkov-results.sarif
+          # Generate a unique SARIF file each run
+          output_file_path: checkov-results-${{ github.run_id }}.sarif
+          # Limit to relevant AWS and CIS checks
           check: |
             CKV_AWS*
             CKV_CIS*

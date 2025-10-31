@@ -44,7 +44,8 @@ jobs:
             CKV2_CIS*
 
       - name: Upload Security Report
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
         with:
           sarif_file: checkov-results-${{ github.run_id }}.sarif
-          category: checkov-${{ github.run_id }}
+          category: checkov

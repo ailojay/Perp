@@ -35,7 +35,7 @@ jobs:
           directory: .
           framework: terraform
           quiet: true
-          soft_fail: false
+          soft_fail: true
           download_external_modules: true
           skip_check: ""
           output_format: sarif
@@ -53,4 +53,5 @@ jobs:
         if: always()
         with:
           sarif_file: checkov-results-${{ github.run_id }}.sarif
-          category: checkov
+          category: checkov-${{ github.sha }}
+          wait-for-processing: true

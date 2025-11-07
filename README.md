@@ -198,3 +198,17 @@ terraform apply
 - **SNS Alerts** - Security findings notifications
 
 This project demonstrates enterprise-grade AWS security architecture with automated compliance, monitoring, and remediation capabilities.
+
+
+## PolicyBot (Live SaaS)
+
+A Slack bot that scans Terraform code in real-time using Checkov.
+
+- **Live Demo**: [slack://your-workspace] (after deploy)
+- **Features**:
+  - `/policy check` → instant findings
+  - CIS/AWS FSBP compliant
+  - Encrypted logs (S3-KMS)
+  - Zero secrets (OIDC + IAM roles)
+- **Cost**: ~$50/month
+- **Status**: MVP in dev

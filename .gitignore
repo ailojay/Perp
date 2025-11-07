@@ -41,3 +41,24 @@ bootstrap.tfstate
 bootstrap.tfstate.*
 bootstrap_override.tf
 bootstrap_override.tf.json
+
+# Python
+__pycache__/
+*.pyc
+.env
+.venv/
+venv/
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+tfplan
+
+# Docker
+.docker/
+
+# Local
+*.log
+.DS_Store
